@@ -1,0 +1,21 @@
+<h1>ここがトップページだね</h1>
+<div>
+    <p>タスクの追加</p>
+    <form action="{% url 'PriorityTask:add' %}" method="POST">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">保存</button>
+    </form>
+</div>
+<p>今のタスクたち</p>
+<div>
+    {% for task in tasks %}
+    <div>
+        <a href="{% url 'PriorityTask:edit' task_id=task.id %}">{{ task.created_date|date:"Y/n/j" }}({{ task.id }})</a>
+        <form action="{% url 'PriorityTask:delete' task_id=task.id %}" method="POST">
+            {% csrf_token %}
+            <button type="submit" onclick='return confirm("本当に削除しますか？")'>削除</button>
+        </form>
+    </div>
+    {% endfor %}
+</div>

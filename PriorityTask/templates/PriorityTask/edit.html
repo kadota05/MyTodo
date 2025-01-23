@@ -1,0 +1,9 @@
+<div>
+    <form action="{% url 'PriorityTask:edit' task_id=task.id%}" method="POST">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">修正</button>
+    </form>
+</div>
+
+<a href="{% url 'PriorityTask:index' %}">トップページに戻る</a>
