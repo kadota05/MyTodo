@@ -1,9 +1,26 @@
-<div>
-    <form action="{% url 'PriorityTask:edit' task_id=task.id%}" method="POST">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">修正</button>
-    </form>
-</div>
+<!-- templates/PriorityTask/edit.html -->
+{% extends "PriorityTask/base.html" %}
+{% load static %}
 
-<a href="{% url 'PriorityTask:index' %}">トップページに戻る</a>
+{% block title %}タスク編集{% endblock %}
+
+{% block content %}
+<div class="page-container">
+  <h2>タスクを修正しましょう</h2>
+
+  <!-- 編集フォームコンテナ -->
+  <div class="task-form-container">
+    <form action="{% url 'PriorityTask:edit' task_id=task.id %}" method="POST">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <!-- 修正ボタン。primary-btnを再利用して「追加」と同じテイストに。 -->
+      <button type="submit" class="primary-btn">修正</button>
+    </form>
+  </div>
+
+  <!-- トップページへ戻る -->
+  <div class="back-link-container">
+    <a href="{% url 'PriorityTask:index' %}" class="back-link">トップページに戻る</a>
+  </div>
+</div>
+{% endblock %}

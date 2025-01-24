@@ -1,0 +1,36 @@
+<!-- templates/PriorityTask/base.html -->
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>{% block title %}華やかToDoアプリ{% endblock %}</title>
+  {% load static %}
+  <!-- メインCSS -->
+  <link rel="stylesheet" href="{% static 'PriorityTask/css/style.css' %}">
+  {% block extra_style %}{% endblock %}
+</head>
+<body>
+
+  <header>
+    <div class="header-title">
+      <h1>華やかToDoアプリ</h1>
+    </div>
+    <nav>
+      <ul>
+        <li><a href="{% url 'PriorityTask:index' %}">ホーム</a></li>
+        <!-- 必要に応じて他のページへのリンクを追加 -->
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    {% block content %}
+    {% endblock %}
+  </main>
+
+  <footer>
+    <p>&copy; 2025 TodoApp</p>
+  </footer>
+
+</body>
+</html>
