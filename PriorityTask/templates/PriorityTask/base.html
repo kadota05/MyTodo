@@ -1,13 +1,32 @@
 <!-- templates/PriorityTask/base.html -->
 <!DOCTYPE html>
+{% load static %}  <!-- staticを読み込む -->
+{% load pwa %} <!-- pwaを読み込む -->
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#000000">
+  <!-- PWA関連コピペ -->
+  <link rel="manifest" crossorigin="use-credentials" href="{% static 'manifest.json' %}">
+  {% progressive_web_app_meta %}
   <title>{% block title %}華やかToDoアプリ{% endblock %}</title>
   {% load static %}
   <!-- メインCSS -->
   <link rel="stylesheet" href="{% static 'PriorityTask/css/style.css' %}">
   {% block extra_style %}{% endblock %}
+  <!-- サービスワーカーを登録 -->
+  <script>
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', function() {
+            navigator.serviceWorker.register('{% static "js/service_worker.js" %}').then(function(registration) {
+                console.log('ServiceWorker registered with scope:', registration.scope);
+            }).catch(function(error) {
+                console.log('ServiceWorker registration failed:', error);
+            });
+        });
+      }
+  </script>
 </head>
 <body>
 
