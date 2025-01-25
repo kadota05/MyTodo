@@ -4,13 +4,13 @@
 {% load pwa %} <!-- pwaを読み込む -->
 <html lang="ja">
 <head>
+  <!-- 検索エンジンから非公開にする-->
+  <meta name="robots" content="noindex, nofollow">
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#000000">
   <!-- PWA関連コピペ -->
   <link rel="manifest" crossorigin="use-credentials" href="{% static 'manifest.json' %}">
   {% progressive_web_app_meta %}
-  <title>{% block title %}華やかToDoアプリ{% endblock %}</title>
+  <title>ToDoアプリ</title>
   {% load static %}
   <!-- メインCSS -->
   <link rel="stylesheet" href="{% static 'PriorityTask/css/style.css' %}">
@@ -31,15 +31,14 @@
 <body>
 
   <header>
-    <div class="header-title">
-      <h1>華やかToDoアプリ</h1>
+    <div class="header">
+      <!---
+      <div class="header-title">サイト名</div>
+      <div class="header-description">サイト説明</div>
+      -->
+      {% block header%}
+      {% endblock %}
     </div>
-    <nav>
-      <ul>
-        <li><a href="{% url 'PriorityTask:index' %}">ホーム</a></li>
-        <!-- 必要に応じて他のページへのリンクを追加 -->
-      </ul>
-    </nav>
   </header>
 
   <main>
@@ -48,7 +47,6 @@
   </main>
 
   <footer>
-    <p>&copy; 2025 TodoApp</p>
   </footer>
 
 </body>

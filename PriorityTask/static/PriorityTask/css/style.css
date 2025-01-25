@@ -1,264 +1,41 @@
-/* static/PriorityTask/css/style.css */
-
-/* ------------------------------
-   1. 全体
------------------------------- */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
-  
-  body {
-    font-family: 'Hiragino Sans', 'Noto Sans JP', sans-serif;
-    background: #fff5e6; /* 全体の背景は薄いクリーム色 */
-    color: #333;
-    line-height: 1.6;
-  }
-  
-  /* ページの主要なコンテナ */
-  .page-container {
-    width: 90%;
-    max-width: 800px;
-    margin: 2rem auto;
-    padding: 1rem;
-    background-color: #ffffff;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-  }
-  
-  /* 見出し */
-  h1, h2, h3 {
-    margin-bottom: 0.5rem;
-    font-weight: normal;
-  }
-  
-  /* ------------------------------
-     2. ヘッダー
-  ------------------------------ */
-  header {
-    background: linear-gradient(to right, #ffc0cb, #ffd700, #90ee90);
-    /* 上記はピンク→黄色→淡い緑のグラデーション。好みに応じて変更 */
-    color: #333;
-    padding: 1.5rem 1rem;
-    text-align: center;
-    position: relative;
-  }
-  
-  /* タイトル部分 */
-  .header-title h1 {
-    font-size: 1.8rem;
-    margin-bottom: 1rem;
-    font-weight: bold;
-  }
-  
-  /* ナビゲーション */
-  nav ul {
-    list-style: none;
+/* 1週間全体を左右に並べる（フレックスボックスで横並び） */
+.week-header {
     display: flex;
-    justify-content: center;
-    gap: 1rem;
+    justify-content: space-around; /* あるいは center, space-between など */
+    margin-bottom: 20px;
   }
   
-  nav a {
-    color: #333;
-    text-decoration: none;
-    font-weight: bold;
-    padding: 0.5rem 0.75rem;
-    border-radius: 4px;
-    transition: background-color 0.3s ease;
+  /* 各「1日分」の要素を縦方向に積む */
+  .week-day {
+    display: flex;                /* フレックスボックスを有効にする */
+    flex-direction: column;       /* 縦に積む */
+    align-items: center;          /* 中央寄せ（任意） */
+    width: 50px;                  /* 各日の幅を適宜調整 */
   }
   
-  nav a:hover {
-    background-color: rgba(255, 255, 255, 0.4);
+  /* 今日だけ背景色を変えたい等の装飾 */
+  .week-day.today {
+    background-color: rgba(255, 215, 0, 0.3);
+    border-radius: 5px;
   }
   
-  /* ------------------------------
-     3. フッター
-  ------------------------------ */
-  footer {
-    text-align: center;
-    padding: 1rem;
-    background-color: #ffe4e1; /* 薄いピンク */
-    margin-top: 2rem;
-  }
-  
-  /* ------------------------------
-     4. ボタン共通スタイル
-  ------------------------------ */
-  button,
-  .edit-link {
-    cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.2s ease;
-  }
-  
-  /* 追加ボタンなど */
-  .primary-btn {
-    background-color: #ffb347; /* オレンジ系 */
-    border: none;
-    color: #fff;
-    padding: 0.6rem 1.2rem;
-    border-radius: 4px;
-    font-size: 1rem;
-  }
-  .primary-btn:hover {
-    background-color: #ff9f00;
-    transform: translateY(-1px);
-  }
-  
-  /* 削除ボタン */
-  .delete-btn {
-    background-color: #ff6f69; /* 赤系 */
-    border: none;
-    color: #fff;
-    padding: 0.5rem 1rem;
-    border-radius: 4px;
-    font-size: 0.9rem;
-    margin-left: 0.5rem;
-  }
-  .delete-btn:hover {
-    background-color: #ff4f49;
-    transform: translateY(-1px);
-  }
-  
-  /* 編集リンク（ボタン風に） */
-  .edit-link {
-    display: inline-block;
-    background-color: #7ec0ee; /* 淡い水色 */
-    color: #fff;
-    padding: 0.5rem 1rem;
-    text-decoration: none;
-    border-radius: 4px;
-    font-size: 0.9rem;
-  }
-  .edit-link:hover {
-    background-color: #63aee0;
-    transform: translateY(-1px);
-  }
-  
-  /* ------------------------------
-     5. フォーム
-  ------------------------------ */
-  .task-form-container {
-    margin: 1rem 0;
-  }
-  
-  form {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-  
-  form button {
-    align-self: flex-start;
-  }
-  
-  /* ------------------------------
-     6. タスク一覧
-  ------------------------------ */
-  .task-list {
-    margin-top: 2rem;
-  }
-  
-  .task-list h3 {
-    margin-bottom: 1rem;
+  /* 日付表示のスタイル例 */
+  .day-number {
     font-size: 1.2rem;
-    color: #444;
+    margin-bottom: 4px; /* 日付と曜日の間隔 */
   }
   
-  /* タスクをカード表示 */
-  .task-card {
-    background: #fafafa;
-    border: 1px solid #eee;
-    border-radius: 6px;
-    padding: 1rem;
-    margin-bottom: 1rem;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-  
-  .task-card:hover {
-    background: #fdfdfd;
-  }
-  
-  /* タスク日付 */
-  .task-date {
+  /* 曜日表示のスタイル例 */
+  .weekday {
     font-size: 0.9rem;
-    color: #666;
-    font-weight: bold;
+    margin-bottom: 4px; /* 曜日と黒丸の間隔 */
   }
   
-  /* タスクのアクションボタンまとめ */
-  .task-actions {
-    display: flex;
-    align-items: center;
-  }
-  
-  /* ------------------------------
-     7. カレンダー (オプション)
-  ------------------------------ */
-  .calendar {
-    display: table;
-    border-collapse: collapse;
-    margin: 1rem auto;
-  }
-  
-  .calendar-row {
-    display: table-row;
-  }
-  
-  .calendar-cell {
-    display: table-cell;
-    width: 50px;
-    height: 50px;
-    text-align: center;
-    vertical-align: middle;
-    border: 1px solid #ccc;
-    position: relative;
-    font-size: 0.9rem;
-  }
-  
-  /* タスク数を表す黒丸 */
-  .task-circle {
-    width: 12px;
-    height: 12px;
-    background-color: #000;
+  /* 黒丸のスタイル例 */
+  .memo-dot {
+    width: 6px;
+    height: 6px;
+    background-color: black;
     border-radius: 50%;
-    display: inline-block;
-    margin-right: 4px;
-  }
-  
-  /* カレンダー日付にホバーアクション（例）*/
-  .calendar-cell:hover {
-    background-color: #fff7e6;
-  }
-  
-  /* ------------------------------
-   追加: トップに戻るリンクなど
------------------------------- */
-/* 戻るリンクをボタン風に装飾 */
-.back-link {
-    display: inline-block;
-    background-color: #edd4ff; /* 薄いパープル系 */
-    color: #fff;
-    padding: 0.5rem 1rem;
-    text-decoration: none;
-    border-radius: 4px;
-    font-size: 0.9rem;
-    transition: background-color 0.3s ease, transform 0.2s ease;
-    margin-top: 1rem; /* 適度な余白 */
-  }
-  
-  .back-link:hover {
-    background-color: #dcb1ff; /* 少し濃いめのパープル */
-    transform: translateY(-1px);
-  }
-  
-  /* 戻るリンク用のコンテナ。中央寄せなどお好みで */
-  .back-link-container {
-    margin-top: 1rem;
-    text-align: center;
   }
   
