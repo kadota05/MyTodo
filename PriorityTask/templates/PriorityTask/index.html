@@ -5,8 +5,8 @@
 {% block header %}
 <div class='week-header'>
   {% for day in date_map %}
-  <!---他の日を押したらそこにページが遷移する機能を明日作る-->
-  <a href="">
+  <!---他の日を押したらそこにページが遷移する機能-->
+  <a href="{% url 'PriorityTask:other_day' other_day=day.date|date:'Y-m-d' %}">
     <div class='week-day{% if day.isToday %} today {% endif %}'>
       <div class='day-number'>
         {{ day.date|date:"j"}}

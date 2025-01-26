@@ -3,39 +3,39 @@
     display: flex;
     justify-content: space-around; /* あるいは center, space-between など */
     margin-bottom: 20px;
-  }
+}
   
-  /* 各「1日分」の要素を縦方向に積む */
-  .week-day {
-    display: flex;                /* フレックスボックスを有効にする */
-    flex-direction: column;       /* 縦に積む */
-    align-items: center;          /* 中央寄せ（任意） */
-    width: 50px;                  /* 各日の幅を適宜調整 */
-  }
-  
-  /* 今日だけ背景色を変えたい等の装飾 */
-  .week-day.today {
-    background-color: rgba(255, 215, 0, 0.3);
-    border-radius: 5px;
-  }
-  
-  /* 日付表示のスタイル例 */
-  .day-number {
-    font-size: 1.2rem;
-    margin-bottom: 4px; /* 日付と曜日の間隔 */
-  }
-  
-  /* 曜日表示のスタイル例 */
-  .weekday {
-    font-size: 0.9rem;
-    margin-bottom: 4px; /* 曜日と黒丸の間隔 */
-  }
-  
-  /* 黒丸のスタイル例 */
-  .memo-dot {
-    width: 6px;
-    height: 6px;
-    background-color: black;
-    border-radius: 50%;
-  }
-  
+/* 各「1日分」の要素を縦方向に積む */
+.week-day {
+  display: flex;                /* フレックスボックスを有効にする */
+  flex-direction: column;       /* 縦に積む */
+  align-items: center;          /* 中央寄せ（任意） */
+  width: 50px;                  /* 各日の幅を適宜調整 */
+}
+
+/* 今日だけ背景色を変えたい等の装飾 */
+.week-day.today {
+  background-color: rgba(255, 215, 0, 0.3);
+  border-radius: 5px;
+}
+
+/* 日付表示のスタイル例 */
+.day-number {
+  font-size: 1.2rem;
+  margin-bottom: 4px; /* 日付と曜日の間隔 */
+}
+
+/* 曜日表示のスタイル例 */
+.week-day {
+  font-size: 0.9rem;
+  margin-bottom: 4px; /* 曜日と黒丸の間隔 */
+}
+
+/* 黒丸のスタイル例 */
+.memo-dot {
+  width: 6px;
+  height: 6px;
+  background-color: black;
+  border-radius: 50%;
+}
+

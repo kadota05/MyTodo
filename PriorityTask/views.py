@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.decorators.http import require_POST
 from django.utils.timezone import now
-from datetime import timedelta
+from datetime import datetime, timedelta
 from .models import PriorityTask
 from .form import PriorityTaskForm
 
@@ -36,14 +36,17 @@ def delete(request, task_id):
     task.delete()
     return redirect('PriorityTask:week_list')
 
-def week_list(request):
+def week_list(request, other_day=None):
     form = PriorityTaskForm
     
-    today = now().date() # 現在時刻（now()）の日付だけ取り出す（.date()）
+    if other_day:
+        today = datetime.strptime(other_day, '%Y-%m-%d').date()
+    else:
+        today = now().date() # 現在時刻（now()）の日付だけ取り出す（.date()）
     
     # 一週間を日曜～土曜の周期で実装するよ
     # 日付（timedeltaを使うと自動的に年や月をまたぐ計算が実行されるから超便利！）
-    start_of_week = today - timedelta(days=(today.weekday()+1)) # today.weekday()は、todayが週の何日目かを返す（月曜=0、火曜=1、…、日曜=6）
+    start_of_week = today - timedelta(days=((today.weekday()+1) % 7)) # today.weekday()は、todayが週の何日目かを返す（月曜=0、火曜=1、…、日曜=6）
     end_of_week = start_of_week + timedelta(days=6)
     
     # 曜日
@@ -67,3 +70,4 @@ def week_list(request):
     
     return render(request, 'PriorityTask/index.html', {'date_map': date_map, 'form': form})
 
+    
