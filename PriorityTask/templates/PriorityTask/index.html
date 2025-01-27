@@ -6,8 +6,8 @@
 <div class='week-header'>
   {% for day in date_map %}
   <!---他の日を押したらそこにページが遷移する機能-->
-  <a href="{% url 'PriorityTask:other_day' other_day=day.date|date:'Y-m-d' %}">
-    <div class='week-day{% if day.isToday %} today {% endif %}'>
+  <a href="{% url 'PriorityTask:other_date' other_date=day.date|date:'Y-m-d' %}">
+    <div class='week-day{% if day.isBasedate %} today {% endif %}'>
       <div class='day-number'>
         {{ day.date|date:"j"}}
       </div>
@@ -24,35 +24,31 @@
 {% endblock %}
 
 {% block content %}
-<h2>今日のタスクを追加しよう</h2>
-
-<!-- タスク追加フォーム -->
-<div class="task-form-container">
-  <form action="{% url 'PriorityTask:add' %}" method="POST">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">追加</button>
-  </form>
-</div>
-
 <!-- 現在のタスク一覧 -->
-<h3>今日のタスク</h3>
+<h2>Priority Task</h2>
 {% for day in date_map %}
-  {% if day.isToday == True %}
+  {% if day.isBasedate == True %}
     {% if day.memo %}
       <div>
         <p>{{ day.memo.task1 }}</p>
         <p>{{ day.memo.task2 }}</p>
         <p>{{ day.memo.task3 }}</p>
       </div>
-      <a href="{% url 'PriorityTask:edit' task_id=day.memo.id %}">編集</a>
-      <form action="{% url 'PriorityTask:delete' task_id=day.memo.id %}" method="POST">
+      <a href="{% url 'PriorityTask:edit' pk=day.memo.id %}">編集</a>
+      <form action="{% url 'PriorityTask:delete' pk=day.memo.id %}" method="POST">
         {% csrf_token %}
         <button type="submit" onclick='return confirm("本当に削除しますか？")'>削除</button>
       </form>
       </div>
+    {% elif day.date > today %}
+      <p>まだ先のお話、、、</p>
     {% else %}
-      <p>まだタスクがありません。</p>
+      <h3>まだタスクがありません。</h3>
+
+      <!-- タスク追加フォーム -->
+      <div class="task-form-container">
+        <a href="{% url 'PriorityTask:add' %}">本日のタスクを追加</a>
+      </div>
     {% endif %}
   {% endif %}
 {% endfor %}
