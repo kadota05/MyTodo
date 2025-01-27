@@ -24,49 +24,46 @@
 {% endblock %}
 
 {% block content %}
-<!-- 現在のタスク一覧 -->
-<h2>Priority Task</h2>
-{% for day in date_map %}
-  {% if day.isBasedate == True %}
-    {% if day.memo %}
-      <div>
-        <p>{{ day.memo.task1 }}</p>
-        <p>{{ day.memo.task2 }}</p>
-        <p>{{ day.memo.task3 }}</p>
-      </div>
-      <a href="{% url 'PriorityTask:edit' pk=day.memo.id %}">編集</a>
-      <form action="{% url 'PriorityTask:delete' pk=day.memo.id %}" method="POST">
-        {% csrf_token %}
-        <button type="submit" onclick='return confirm("本当に削除しますか？")'>削除</button>
-      </form>
-      </div>
-    {% elif day.date > today %}
-      <p>まだ先のお話、、、</p>
-    {% else %}
-      <h3>まだタスクがありません。</h3>
-
-      <!-- タスク追加フォーム -->
-      <div class="task-form-container">
-        <a href="{% url 'PriorityTask:add' %}">本日のタスクを追加</a>
-      </div>
-    {% endif %}
-  {% endif %}
-{% endfor %}
-
-<div class="container my-5">
+<div class="container bg-light my-5">
   <div class="row">
 
     <!-- PriorityTask カード -->
     <div class="col-12 my-1">
-      <div class="card border-0 border-start border-5 border-primary shadow h-100 py-2"> 
-        <div class="card-body d-flex align-items-center justify-content-between">
-          <div>
-            <div class="text-xs fw-bold text-primary text-uppercase mb-1">Priority Task</div>
-            <div class="h5 mb-0 fw-bold text-gray-800">coming soon...</div>
-          </div>
-          <!-- ドルアイコン -->
-          <div class="text-gray-300">
-            <i class="bi bi-currency-dollar" style="font-size: 1.5rem;"></i>
+      <div class="card border-0 border-start border-5 border-primary shadow h-200 py-2"> 
+        <div class="card-body">
+          <div class="row no-gutters align-items-center">
+            <div class="col mr-2">
+              <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Priority Task</div>
+              <ul class="list-group list-group-flush">
+                {% for day in date_map %}
+                  {% if day.isBasedate == True %}
+                    {% if day.memo %}
+                      <li class="list-group-item h5 mb-0 font-weight-bold text-gray-800">{{ day.memo.task1 }}</li>
+                      <li class="list-group-item h5 mb-0 font-weight-bold text-gray-800">{{ day.memo.task2 }}</li>
+                      <li class="list-group-item h5 mb-0 font-weight-bold text-gray-800">{{ day.memo.task3 }}</li>
+                      <div class="card-footer">
+                        <a href="{% url 'PriorityTask:edit' pk=day.memo.id %}">編集</a>
+                        <form action="{% url 'PriorityTask:delete' pk=day.memo.id %}" method="POST">
+                          {% csrf_token %}
+                          <button type="submit" onclick='return confirm("本当に削除しますか？")'>削除</button>
+                        </form>
+                      </div>
+                    {% elif day.date > today %}
+                      <div class="h5 mb-0 fw-bold text-gray-800">まだ先のお話、、、</div>
+                    {% else %}
+                      <!-- タスク追加フォーム -->
+                      <div class="task-form-container">
+                        <a href="{% url 'PriorityTask:add' %} " class="h5 mb-0 fw-bold text-gray-800">本日のタスクを追加</a>
+                      </div>
+                    {% endif %}
+                  {% endif %}
+                {% endfor %}
+              </ul>
+            </div>
+            <!-- ドルアイコン -->
+            <div class="text-gray-300">
+              <i class="bi bi-currency-dollar" style="font-size: 1.5rem;"></i>
+            </div>
           </div>
         </div>
       </div>
@@ -75,14 +72,16 @@
     <!-- habit(習慣) カード -->
     <div class="col-12 my-1">
       <div class="card border-0 border-start border-5 border-secondary shadow h-100 py-2"> 
-        <div class="card-body d-flex align-items-center justify-content-between">
-          <div>
-            <div class="text-xs fw-bold text-secondary text-uppercase mb-1">Habit</div>
-            <div class="h5 mb-0 fw-bold text-gray-800">coming soon...</div>
-          </div>
-          <!-- ドルアイコン -->
-          <div class="text-gray-300">
-            <i class="bi bi-currency-dollar" style="font-size: 1.5rem;"></i>
+        <div class="card-body">
+          <div class="row no-gutters align-items-center">
+            <div class="col mr-2">
+              <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Habit</div>
+              <div class="h5 mb-0 font-weight-bold text-gray-800">coming soon...</div>
+            </div>
+            <!-- ドルアイコン -->
+            <div class="text-gray-300">
+              <i class="bi bi-currency-dollar" style="font-size: 1.5rem;"></i>
+            </div>
           </div>
         </div>
       </div>
@@ -91,14 +90,16 @@
     <!-- tweet(つぶやき) カード -->
     <div class="col-12 my-1">
       <div class="card border-0 border-start border-5 border-success shadow h-100 py-2"> 
-        <div class="card-body d-flex align-items-center justify-content-between">
-          <div>
-            <div class="text-xs fw-bold text-success text-uppercase mb-1">Tweet</div>
-            <div class="h5 mb-0 fw-bold text-gray-800">coming soon...</div>
-          </div>
-          <!-- ドルアイコン -->
-          <div class="text-gray-300">
-            <i class="bi bi-currency-dollar" style="font-size: 1.5rem;"></i>
+        <div class="card-body">
+          <div class="row no-gutters align-items-center">
+            <div class="col mr-2">
+              <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Tweet</div>
+              <div class="h5 mb-0 font-weight-bold text-gray-800">coming soon...</div>
+            </div>
+            <!-- つぶやきアイコン -->
+            <div class="col-auto">
+              <i class="fas fa-comments fa-2x text-gray-300"></i>
+            </div>
           </div>
         </div>
       </div>
