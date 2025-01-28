@@ -29,28 +29,27 @@
 
     <!-- 中央に「<」「Today」「>」 -->
     <div class="d-flex justify-content-center align-items-center w-100">
-      <a class="btn text-decoration-none me-2" href="#"
-         onclick="alert('前日のタスク表示は未実装'); return false;">
-        <i class="bi bi-chevron-left fs-4 text-dark"></i>
+      <a class="btn btn-outline-secondary btn-sm text-decoration-none me-2" href="{% url 'PriorityTask:pre' pre=current_date %}">
+        <i class="bi bi-chevron-left fs-4 text-dar"></i>
       </a>
-      <span class="fw-bold fs-5 text-dark">Today</span>
-      <a class="btn text-decoration-none ms-2" href="#"
-         onclick="alert('翌日のタスク表示は未実装'); return false;">
+      <span class="fw-bold fs-5 mx-3 text-dark">{{ current_date|date:'n/j' }}</span>
+      <a class="btn btn-outline-secondary btn-sm text-decoration-none ms-2" href="{% url 'PriorityTask:post' post=current_date %}">
         <i class="bi bi-chevron-right fs-4 text-dark"></i>
       </a>
     </div>
 
-    <!-- 右端：カレンダーボタン -->
-    <div class="position-absolute end-0">
-      <button
-        class="btn text-decoration-none"
-        data-bs-toggle="modal"
-        data-bs-target="#calendarModal"
-      >
+    <!-- 親要素を作り、position-absolute top-0 end-0 を指定 -->
+    <div class="position-absolute top-0 end-0 d-flex">
+      <!-- todayに戻るボタン -->
+      <a class="btn btn-sm text-decoration-none me-2" href="{% url 'PriorityTask:index' %}">
+        <i class="bi bi-arrow-clockwise fs-4 text-dark"></i>
+      </a>
+      
+      <!-- カレンダーボタン -->
+      <button class="btn text-decoration-none" data-bs-toggle="modal" data-bs-target="#calendarModal">
         <i class="bi bi-calendar3 fs-4 text-dark"></i>
       </button>
     </div>
-
   </div>
 </nav>
 
@@ -96,38 +95,34 @@
               <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Priority Task</div>
               <ul class="list-group list-group-flush">
                 <div class="row align-items-center">
-                {% for day in date_map %}
-                  {% if day.isBasedate == True %}
-                    {% if day.memo %}
-                    <div class="col offset-1">
-                      <li class="list-group-item h5 mb-0 font-weight-bold text-gray-800">{{ day.memo.task1 }}</li>
-                      <li class="list-group-item h5 mb-0 font-weight-bold text-gray-800">{{ day.memo.task2 }}</li>
-                      <li class="list-group-item h5 mb-0 font-weight-bold text-gray-800">{{ day.memo.task3 }}</li>
-                      <!-- 右カラム: 編集・削除アイコン (縦並び＆全体の中央に合わせる) -->
-                      <div class="col-auto d-flex flex-column justify-content-center align-items-center">
-                        <!-- 編集アイコン -->
-                        <a href="{% url 'PriorityTask:edit' pk=day.memo.id %}" class="mb-2 text-decoration-none">
-                          <i class="bi bi-pencil-square fs-5 text-primary"></i>
-                        </a>
-                        <!-- 削除アイコン -->
-                        <form action="{% url 'PriorityTask:delete' pk=day.memo.id %}" method="POST" onsubmit="return confirm('本当に削除しますか？')" class="m-0 p-0">
-                          {% csrf_token %}
-                          <button type="submit" class="btn p-0">
-                            <i class="bi bi-trash3 fs-5 text-danger"></i>
-                          </button>
-                        </form>
-                      </div>
-                    </div>
-                    {% elif day.date > today %}
-                      <div class="h5 mb-0 fw-bold text-gray-800">まだ先のお話、、、</div>
-                    {% else %}
-                      <!-- タスク追加フォーム -->
-                      <div class="task-form-container">
-                        <a href="{% url 'PriorityTask:add' %} " class="h5 mb-0 fw-bold text-gray-800">本日のタスクを追加</a>
-                      </div>
-                    {% endif %}
-                  {% endif %}
-                {% endfor %}
+                {% if task %}
+                <div class="col-auto ">
+                  <li class="list-group-item h5 mb-0 font-weight-bold text-gray-800">{{ task.task1 }}</li>
+                  <li class="list-group-item h5 mb-0 font-weight-bold text-gray-800">{{ task.task2 }}</li>
+                  <li class="list-group-item h5 mb-0 font-weight-bold text-gray-800">{{ task.task3 }}</li>
+                </div>
+                <!-- 右カラム: 編集・削除アイコン (縦並び＆全体の中央に合わせる) -->
+                <div class="col-auto d-flex flex-column justify-content-center align-items-center">
+                  <!-- 編集アイコン -->
+                  <a href="{% url 'PriorityTask:edit' pk=task.id %}" class="mb-2 text-decoration-none">
+                    <i class="bi bi-pencil-square fs-5 text-primary"></i>
+                  </a>
+                  <!-- 削除アイコン -->
+                  <form action="{% url 'PriorityTask:delete' pk=task.id %}" method="POST" onsubmit="return confirm('本当に削除しますか？')" class="m-0 p-0">
+                    {% csrf_token %}
+                    <button type="submit" class="btn p-0">
+                      <i class="bi bi-trash3 fs-5 text-danger"></i>
+                    </button>
+                  </form>  
+                </div>
+                {% elif current_date > today %}
+                  <div class="h5 mb-0 fw-bold text-gray-800">まだ先のお話、、、</div>
+                {% else %}
+                  <!-- タスク追加フォーム -->
+                  <div class="task-form-container">
+                    <a href="{% url 'PriorityTask:add' %} " class="h5 mb-0 fw-bold text-gray-800">タスクを追加</a>
+                  </div>
+                {% endif %}
               </ul>
             </div>
             </div>
@@ -142,7 +137,7 @@
         <div class="card-body">
           <div class="row no-gutters align-items-center">
             <div class="col mr-2">
-              <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Habit</div>
+              <div class="text-xs font-weight-bold text-secondary text-uppercase mb-1">Habit</div>
               <div class="h5 mb-0 font-weight-bold text-gray-800">coming soon...</div>
             </div>
           </div>
@@ -156,7 +151,7 @@
         <div class="card-body">
           <div class="row no-gutters align-items-center">
             <div class="col mr-2">
-              <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Tweet</div>
+              <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Tweet</div>
               <div class="h5 mb-0 font-weight-bold text-gray-800">coming soon...</div>
             </div>
           </div>

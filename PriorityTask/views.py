@@ -2,11 +2,56 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.views.decorators.http import require_POST
 from django.utils.timezone import now
 from datetime import datetime, timedelta
-from django.views.generic import TemplateView, CreateView, UpdateView, DeleteView
+from django.views.generic import TemplateView, CreateView, UpdateView, DeleteView, DetailView
 from django.urls import reverse_lazy
 
 from .models import PriorityTask
 from .form import PriorityTaskForm
+
+
+class index(TemplateView):
+    template_name = "PriorityTask/index.html"
+    
+    def get(self, request, *args, **kwargs):
+        self.today = now().date()
+        if 'post' in kwargs:
+            post = kwargs['post'] # tomorrowという指示があったらそのdateを保管する
+            post = datetime.strptime(post, '%Y-%m-%d').date()
+            self.current_date = post + timedelta(days=1)
+        elif 'pre' in kwargs:
+            pre = kwargs['pre']
+            pre = datetime.strptime(pre, '%Y-%m-%d').date()
+            self.current_date = pre - timedelta(days=1)
+        else:
+            self.current_date = now().date()
+        return super().get(request, *args, **kwargs)
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['task'] = PriorityTask.objects.filter(created_date=self.current_date).first()
+        context['current_date'] = self.current_date
+        context['today'] = self.today
+        return context
+    
+    
+class add(CreateView):
+    model = PriorityTask
+    form_class = PriorityTaskForm
+    success_url = reverse_lazy('PriorityTask:week_list')
+
+class edit(UpdateView):
+    model = PriorityTask
+    form_class = PriorityTaskForm
+    success_url = reverse_lazy('PriorityTask:week_list')
+
+
+class delete(DeleteView):
+    model = PriorityTask
+    success_url = reverse_lazy('PriorityTask:week_list')
+    
+
+
+"""
 from .mixins import WeekCalculationMixin
 
 # dateは日付、weekdayは曜日とします
@@ -14,8 +59,15 @@ class WeekView(WeekCalculationMixin, TemplateView):
     template_name = "PriorityTask/index.html"
     
     def get(self, request, *args, **kwargs):
-        self.today_date = now().date()
-        self.other_date = kwargs.get('other_date', None)
+        if 'tomorrow' in kwargs:
+            self.other_date = kwargs['tomorrow'] # tomorrowという指示があったらそのdateを保管する
+            self.current_date = self.other_date + timedelta(days=1)
+        elif 'yesterday' in kwargs:
+            self.other_date = kwargs['yesterday']
+            self.current_date = self.other_date - timedelta(days=1)
+        else:
+            self.other_date = None
+            self.current_date = now().date()
         return super().get(self, request, *args, **kwargs)
     
     def get_context_data(self, **kwargs):
@@ -52,22 +104,7 @@ class WeekView(WeekCalculationMixin, TemplateView):
             date_map.append({'date': date, 'weekday': weekday, 'isBasedate': isBasedate, 'memo': memo})
         return date_map
 
-class add(CreateView):
-    model = PriorityTask
-    form_class = PriorityTaskForm
-    success_url = reverse_lazy('PriorityTask:week_list')
 
-class edit(UpdateView):
-    model = PriorityTask
-    form_class = PriorityTaskForm
-    success_url = reverse_lazy('PriorityTask:week_list')
-
-
-class delete(DeleteView):
-    model = PriorityTask
-    success_url = reverse_lazy('PriorityTask:week_list')
-    
-"""
 def week_list(request, other_day=None):
     today_date = now().date()
     
@@ -101,8 +138,7 @@ def week_list(request, other_day=None):
         date_map.append({'date': date, 'weekday': weekday, 'memo': memo, 'isToday': isToday})
     
     return render(request, 'PriorityTask/index.html', {'date_map': date_map, 'today': today_date})
-"""
-"""
+
 def add(request):
     if request.method == "POST":
         form = PriorityTaskForm(request.POST) -> form
@@ -111,8 +147,7 @@ def add(request):
             return redirect('PriorityTask:week_list') -> success_url(POSTが成功したときに飛ぶurl)
     else:
         return redirect('PriorityTask:week_list') -> template_name(getした時に飛ぶurl)
-"""    
-"""
+
 def edit(request, task_id):
     if request.method == "POST":
         form = PriorityTaskForm(request.POST)
@@ -123,8 +158,7 @@ def edit(request, task_id):
         task = get_object_or_404(PriorityTask, id=task_id)
         form = PriorityTaskForm(instance=task)
         return render(request, 'PriorityTask/edit.html', {'task':task, 'form':form})
-"""
-"""
+    
 @require_POST
 def delete(request, task_id):
     task = get_object_or_404(PriorityTask, id=task_id)
