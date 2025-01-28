@@ -3,9 +3,10 @@
 {% load static %}
 
 {% block header %}
+<!--
 <div class='week-header'>
   {% for day in date_map %}
-  <!---他の日を押したらそこにページが遷移する機能-->
+  他の日を押したらそこにページが遷移する機能
   <a href="{% url 'PriorityTask:other_date' other_date=day.date|date:'Y-m-d' %}">
     <div class='week-day{% if day.isBasedate %} today {% endif %}'>
       <div class='day-number'>
@@ -21,6 +22,65 @@
   </a>
   {% endfor %}
 </div>
+-->
+<!-- ヘッダー -->
+<nav class="navbar navbar-light bg-light fixed-top shadow">
+  <div class="container position-relative">
+
+    <!-- 中央に「<」「Today」「>」 -->
+    <div class="d-flex justify-content-center align-items-center w-100">
+      <a class="btn text-decoration-none me-2" href="#"
+         onclick="alert('前日のタスク表示は未実装'); return false;">
+        <i class="bi bi-chevron-left fs-4 text-dark"></i>
+      </a>
+      <span class="fw-bold fs-5 text-dark">Today</span>
+      <a class="btn text-decoration-none ms-2" href="#"
+         onclick="alert('翌日のタスク表示は未実装'); return false;">
+        <i class="bi bi-chevron-right fs-4 text-dark"></i>
+      </a>
+    </div>
+
+    <!-- 右端：カレンダーボタン -->
+    <div class="position-absolute end-0">
+      <button
+        class="btn text-decoration-none"
+        data-bs-toggle="modal"
+        data-bs-target="#calendarModal"
+      >
+        <i class="bi bi-calendar3 fs-4 text-dark"></i>
+      </button>
+    </div>
+
+  </div>
+</nav>
+
+<!-- カレンダーモーダル（ダミー） -->
+<div class="modal fade" id="calendarModal" tabindex="-1" aria-labelledby="calendarModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="calendarModalLabel">Select Date</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <p>ここでカレンダーを表示し、日付を選択できるようにする想定</p>
+        <form>
+          <div class="mb-3">
+            <label for="dateInput" class="form-label">日付選択(ダミー)</label>
+            <input type="date" class="form-control" id="dateInput">
+          </div>
+          <button
+            type="button"
+            class="btn btn-primary"
+            onclick="alert('日付指定で遷移は未実装'); return false;"
+          >
+            移動
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
 {% endblock %}
 
 {% block content %}
@@ -35,19 +95,29 @@
             <div class="col mr-2">
               <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Priority Task</div>
               <ul class="list-group list-group-flush">
+                <div class="row align-items-center">
                 {% for day in date_map %}
                   {% if day.isBasedate == True %}
                     {% if day.memo %}
+                    <div class="col offset-1">
                       <li class="list-group-item h5 mb-0 font-weight-bold text-gray-800">{{ day.memo.task1 }}</li>
                       <li class="list-group-item h5 mb-0 font-weight-bold text-gray-800">{{ day.memo.task2 }}</li>
                       <li class="list-group-item h5 mb-0 font-weight-bold text-gray-800">{{ day.memo.task3 }}</li>
-                      <div class="card-footer">
-                        <a href="{% url 'PriorityTask:edit' pk=day.memo.id %}">編集</a>
-                        <form action="{% url 'PriorityTask:delete' pk=day.memo.id %}" method="POST">
+                      <!-- 右カラム: 編集・削除アイコン (縦並び＆全体の中央に合わせる) -->
+                      <div class="col-auto d-flex flex-column justify-content-center align-items-center">
+                        <!-- 編集アイコン -->
+                        <a href="{% url 'PriorityTask:edit' pk=day.memo.id %}" class="mb-2 text-decoration-none">
+                          <i class="bi bi-pencil-square fs-5 text-primary"></i>
+                        </a>
+                        <!-- 削除アイコン -->
+                        <form action="{% url 'PriorityTask:delete' pk=day.memo.id %}" method="POST" onsubmit="return confirm('本当に削除しますか？')" class="m-0 p-0">
                           {% csrf_token %}
-                          <button type="submit" onclick='return confirm("本当に削除しますか？")'>削除</button>
+                          <button type="submit" class="btn p-0">
+                            <i class="bi bi-trash3 fs-5 text-danger"></i>
+                          </button>
                         </form>
                       </div>
+                    </div>
                     {% elif day.date > today %}
                       <div class="h5 mb-0 fw-bold text-gray-800">まだ先のお話、、、</div>
                     {% else %}
@@ -60,9 +130,6 @@
                 {% endfor %}
               </ul>
             </div>
-            <!-- ドルアイコン -->
-            <div class="text-gray-300">
-              <i class="bi bi-currency-dollar" style="font-size: 1.5rem;"></i>
             </div>
           </div>
         </div>
@@ -78,10 +145,6 @@
               <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Habit</div>
               <div class="h5 mb-0 font-weight-bold text-gray-800">coming soon...</div>
             </div>
-            <!-- ドルアイコン -->
-            <div class="text-gray-300">
-              <i class="bi bi-currency-dollar" style="font-size: 1.5rem;"></i>
-            </div>
           </div>
         </div>
       </div>
@@ -96,15 +159,30 @@
               <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Tweet</div>
               <div class="h5 mb-0 font-weight-bold text-gray-800">coming soon...</div>
             </div>
-            <!-- つぶやきアイコン -->
-            <div class="col-auto">
-              <i class="fas fa-comments fa-2x text-gray-300"></i>
-            </div>
           </div>
         </div>
       </div>
     </div>
   </div>
 </div>
+{% endblock %}
 
+{% block footer %}
+<!-- フッター（fixed-bottom）: 背景をやや暗く -->
+<nav class="navbar navbar-light bg-light fixed-bottom shadow">
+  <div class="container d-flex justify-content-around text-white">
+    <a href="#" class="nav-button" onclick="alert('Today画面は未実装'); return false;">
+      <i class="bi bi-house-door fs-5"></i><br><small>Today</small>
+    </a>
+    <a href="#" class="nav-button" onclick="alert('Trends画面は未実装'); return false;">
+      <i class="bi bi-graph-up fs-5"></i><br><small>Trends</small>
+    </a>
+    <a href="#" class="nav-button" onclick="alert('Community画面は未実装'); return false;">
+      <i class="bi bi-people fs-5"></i><br><small>Community</small>
+    </a>
+    <a href="#" class="nav-button" onclick="alert('Profile画面は未実装'); return false;">
+      <i class="bi bi-person fs-5"></i><br><small>Profile</small>
+    </a>
+  </div>
+</nav>
 {% endblock %}
