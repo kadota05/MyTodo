@@ -24,6 +24,14 @@ console_command = '/code/manage.py shell'
 [[vm]]
   size = 'shared-cpu-1x'
 
-[[statics]]
-  guest_path = '/code/static'
-  url_prefix = '/static/'
+[[services]]
+  internal_port = 8000
+  processes = ["app"]
+  protocol = "tcp"
+
+  [[services.ports]]
+    handlers = ["http"]
+    port = 80
+  [[services.ports]]
+    handlers = ["tls", "http"]
+    port = 443

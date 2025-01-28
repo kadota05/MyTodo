@@ -1,29 +1,16 @@
 # Pythonイメージをベースにする
 FROM python:3.10-slim
 
-# 作業ディレクトリ
 WORKDIR /app
-
-# システム更新とライブラリインストール
 RUN apt-get update && apt-get install -y build-essential libpq-dev curl
 
-# ローカルのrequirements.txtをコンテナにコピー
 COPY requirements.txt /app/
-
-# ライブラリをインストール
 RUN pip install --no-cache-dir -r requirements.txt
 
-# プロジェクトのファイルを全部コピー
 COPY . /app/
-
-# Collect staticを行う（必要に応じて）
 RUN python manage.py collectstatic --noinput
 
-# ポートは8000を使う（DjangoのデフォルトやGunicornなどに合わせる）
 EXPOSE 8000
-
-# Gunicornのインストール（requirements.txtに入っていれば不要）
 RUN pip install gunicorn
 
-# Gunicornサーバを起動するコマンド(ワーカーの数やオプションは適宜調整)
-CMD gunicorn mysite.wsgi:application --bind 0.0.0.0:8000
+CMD ["gunicorn", "mysite.wsgi:application", "--bind", "0.0.0.0:8000"]
