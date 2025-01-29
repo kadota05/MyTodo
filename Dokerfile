@@ -13,6 +13,9 @@ COPY requirements.txt /app/
 # ライブラリをインストール
 RUN pip install --no-cache-dir -r requirements.txt
 
+# データディレクトリを作成
+RUN mkdir -p /code/data
+
 # プロジェクトのファイルを全部コピー
 COPY . /code/
 
