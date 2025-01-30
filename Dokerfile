@@ -13,11 +13,11 @@ COPY requirements.txt /app/
 # ライブラリをインストール
 RUN pip install --no-cache-dir -r requirements.txt
 
-# データディレクトリを作成
-RUN mkdir -p /code/data
-
 # プロジェクトのファイルを全部コピー
 COPY . /code/
+
+# データベース用ディレクトリの作成とパーミッション設定
+RUN mkdir -p /code/data && chmod 777 /code/data
 
 # Collect staticを行う（必要に応じて）
 RUN python manage.py collectstatic --noinput
