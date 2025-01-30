@@ -13,8 +13,6 @@ console_command = '/code/manage.py shell'
   PORT = '8000'
 
 [deploy]
-  # デプロイ後に自動でマイグレーションを実行
-  release_command = "python manage.py migrate"
   
 [http_service]
   internal_port = 8000

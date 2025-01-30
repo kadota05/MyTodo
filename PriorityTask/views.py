@@ -37,17 +37,17 @@ class index(TemplateView):
 class add(CreateView):
     model = PriorityTask
     form_class = PriorityTaskForm
-    success_url = reverse_lazy('PriorityTask:week_list')
+    success_url = reverse_lazy('PriorityTask:index')
 
 class edit(UpdateView):
     model = PriorityTask
     form_class = PriorityTaskForm
-    success_url = reverse_lazy('PriorityTask:week_list')
+    success_url = reverse_lazy('PriorityTask:index')
 
 
 class delete(DeleteView):
     model = PriorityTask
-    success_url = reverse_lazy('PriorityTask:week_list')
+    success_url = reverse_lazy('PriorityTask:index')
     
 
 
