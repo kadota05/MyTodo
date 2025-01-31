@@ -1,5 +1,4 @@
 from django.db import models
-from datetime import datetime
 
 class PriorityTask(models.Model):
     created_date = models.DateField("作成日", auto_now_add=True)

@@ -39,10 +39,20 @@
   border-radius: 50%;
 }
 
+.navbar.fixed-top {
+  /* もともとの上パディングが 0.5rem 欲しい場合 */
+  padding-top: calc(0.5rem + env(safe-area-inset-top));
+  /* 背景色 */
+  background-color: #f8f9fa;
+}
 
-/* 例: style.css など */
-@media (max-width: 768px) {
-  .navbar.fixed-bottom {
-    bottom: 15px; /* ここを調整して余白を好きな分だけ作る */
-  }
+.navbar.fixed-bottom {
+  /* 従来通りの上下パディング */
+  padding: 0.5rem 0;
+
+  /* iPhoneのホームバーぶんだけ背景をさらに下に伸ばす */
+  padding-bottom: calc(0.5rem + env(safe-area-inset-bottom));
+
+  /* 必要に応じて背景色 */
+  background-color: #f8f9fa; 
 }

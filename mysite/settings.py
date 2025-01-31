@@ -27,7 +27,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY', '開発用のデフォルトキー')
 DEBUG = True
 
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['192.168.11.11']
 
 
 # Application definition
@@ -40,6 +40,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'PriorityTask',
+    'Habit',
+    'Tweet',
+    'core',
     'pwa',
 ]
 
