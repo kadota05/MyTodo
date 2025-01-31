@@ -27,7 +27,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY', '開発用のデフォルトキー')
 DEBUG = True
 
 
-ALLOWED_HOSTS = ['192.168.11.11']
+ALLOWED_HOSTS = ['192.168.11.11', 'todo-apps-ancient-haze-7756.fly.dev']
 
 
 # Application definition
@@ -84,7 +84,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': '/code/data/db.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        #'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
 
