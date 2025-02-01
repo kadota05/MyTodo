@@ -19,8 +19,9 @@ from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path("", include("PriorityTask.urls")),
-    path("tweet/", include("Tweet.urls")),
+    path("", include("core.urls")),
+    path("prioritytask/", include("PriorityTask.urls")),
     #path("habit/", include("Habit.urls")),
-    #path("core/", include("core.urls")),
+    path("tweet/", include("Tweet.urls")),
+    
 ]

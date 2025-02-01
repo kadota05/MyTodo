@@ -27,7 +27,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY', '開発用のデフォルトキー')
 DEBUG = True
 
 
-ALLOWED_HOSTS = ['192.168.11.11', 'todo-apps-ancient-haze-7756.fly.dev']
+ALLOWED_HOSTS = ['127.0.0.1', '192.168.11.11', 'todo-apps-ancient-haze-7756.fly.dev']
 
 
 # Application definition
@@ -84,7 +84,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': '/code/data/db.sqlite3',
-        #'NAME': BASE_DIR / 'db.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
 
@@ -131,3 +131,10 @@ STATIC_URL = '/static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LOGIN_REDIRECT_URL = '/'  # ログイン時にリダイレクトするページ（今回はトップページ）
+
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://todo-apps-ancient-haze-7756.fly.dev",
+]
+# デプロイ環境でHTTPSを使っている場合に推奨されているらしいやつ
+CSRF_COOKIE_SECURE = True

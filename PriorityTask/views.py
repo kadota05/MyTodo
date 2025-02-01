@@ -7,47 +7,22 @@ from django.urls import reverse_lazy
 
 from .models import PriorityTask
 from .form import PriorityTaskForm
-
-
-class index(TemplateView):
-    template_name = "PriorityTask/index.html"
-    
-    def get(self, request, *args, **kwargs):
-        self.today = now().date()
-        if 'post' in kwargs:
-            post = kwargs['post'] # tomorrowという指示があったらそのdateを保管する
-            post = datetime.strptime(post, '%Y-%m-%d').date()
-            self.current_date = post + timedelta(days=1)
-        elif 'pre' in kwargs:
-            pre = kwargs['pre']
-            pre = datetime.strptime(pre, '%Y-%m-%d').date()
-            self.current_date = pre - timedelta(days=1)
-        else:
-            self.current_date = now().date()
-        return super().get(request, *args, **kwargs)
-    
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['task'] = PriorityTask.objects.filter(created_date=self.current_date).first()
-        context['current_date'] = self.current_date
-        context['today'] = self.today
-        return context
     
     
 class add(CreateView):
     model = PriorityTask
     form_class = PriorityTaskForm
-    success_url = reverse_lazy('PriorityTask:index')
+    success_url = reverse_lazy('core:index')
 
 class edit(UpdateView):
     model = PriorityTask
     form_class = PriorityTaskForm
-    success_url = reverse_lazy('PriorityTask:index')
+    success_url = reverse_lazy('core:index')
 
 
 class delete(DeleteView):
     model = PriorityTask
-    success_url = reverse_lazy('PriorityTask:index')
+    success_url = reverse_lazy('core:index')
     
 
 

@@ -1,0 +1,196 @@
+<!-- templates/PriorityTask/index.html -->
+{% extends "PriorityTask/base.html" %}
+{% load static %}
+
+{% block header %}
+<!--
+<div class='week-header'>
+  {% for day in date_map %}
+  他の日を押したらそこにページが遷移する機能
+  <a href="{% url 'PriorityTask:other_date' other_date=day.date|date:'Y-m-d' %}">
+    <div class='week-day{% if day.isBasedate %} today {% endif %}'>
+      <div class='day-number'>
+        {{ day.date|date:"j"}}
+      </div>
+      <div class='week-day'>
+        {{ day.weekday }}
+      </div>
+      {% if day.memo %}
+      <div class='memo-dot'></div>
+      {% endif %}  
+    </div>
+  </a>
+  {% endfor %}
+</div>
+-->
+<!-- ヘッダー -->
+<nav class="navbar navbar-light bg-light fixed-top shadow">
+  <div class="container position-relative">
+
+    <!-- 中央に「<」「Today」「>」 -->
+    <div class="d-flex justify-content-center align-items-center w-100">
+      <a class="btn btn-outline-secondary btn-sm text-decoration-none me-2" href="{% url 'core:pre' pre=current_date %}">
+        <i class="bi bi-chevron-left fs-4 text-dar"></i>
+      </a>
+      <span class="fw-bold fs-5 mx-3 text-dark">{{ current_date|date:'n/j' }}</span>
+      <a class="btn btn-outline-secondary btn-sm text-decoration-none ms-2" href="{% url 'core:post' post=current_date %}">
+        <i class="bi bi-chevron-right fs-4 text-dark"></i>
+      </a>
+    </div>
+
+    <!-- 親要素を作り、position-absolute top-0 end-0 を指定 -->
+    <div class="position-absolute top-0 end-0 d-flex">
+      <!-- todayに戻るボタン -->
+      <a class="btn btn-sm text-decoration-none me-2" href="{% url 'core:index' %}">
+        <i class="bi bi-arrow-clockwise fs-4 text-dark"></i>
+      </a>
+      
+      <!-- カレンダーボタン -->
+      <button class="btn text-decoration-none" data-bs-toggle="modal" data-bs-target="#calendarModal">
+        <i class="bi bi-calendar3 fs-4 text-dark"></i>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- カレンダーモーダル（ダミー） -->
+<div class="modal fade" id="calendarModal" tabindex="-1" aria-labelledby="calendarModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="calendarModalLabel">Select Date</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <p>ここでカレンダーを表示し、日付を選択できるようにする想定</p>
+        <form>
+          <div class="mb-3">
+            <label for="dateInput" class="form-label">日付選択(ダミー)</label>
+            <input type="date" class="form-control" id="dateInput">
+          </div>
+          <button
+            type="button"
+            class="btn btn-primary"
+            onclick="alert('日付指定で遷移は未実装'); return false;"
+          >
+            移動
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="container bg-light my-5">
+  <div class="row">
+
+    <!-- PriorityTask カード -->
+    <div class="col-12 my-1">
+      <div class="card border-0 border-start border-5 border-primary shadow h-200 py-2"> 
+        <div class="card-body">
+          <div class="row no-gutters align-items-center">
+            <div class="col mr-2">
+              <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Priority Task</div>
+              <ul class="list-group list-group-flush">
+                <div class="row align-items-center">
+                {% if task %}
+                <div class="col-auto ">
+                  <li class="list-group-item h5 mb-0 font-weight-bold text-gray-800">{{ task.task1 }}</li>
+                  <li class="list-group-item h5 mb-0 font-weight-bold text-gray-800">{{ task.task2 }}</li>
+                  <li class="list-group-item h5 mb-0 font-weight-bold text-gray-800">{{ task.task3 }}</li>
+                </div>
+                <!-- 右カラム: 編集・削除アイコン (縦並び＆全体の中央に合わせる) -->
+                <div class="col-auto d-flex flex-column justify-content-center align-items-center">
+                  <!-- 編集アイコン -->
+                  <a href="{% url 'PriorityTask:edit' pk=task.id %}" class="mb-2 text-decoration-none">
+                    <i class="bi bi-pencil-square fs-5 text-primary"></i>
+                  </a>
+                  <!-- 削除アイコン -->
+                  <form action="{% url 'PriorityTask:delete' pk=task.id %}" method="POST" onsubmit="return confirm('本当に削除しますか？')" class="m-0 p-0">
+                    {% csrf_token %}
+                    <button type="submit" class="btn p-0">
+                      <i class="bi bi-trash3 fs-5 text-danger"></i>
+                    </button>
+                  </form>  
+                </div>
+                {% elif current_date > today %}
+                  <div class="h5 mb-0 fw-bold text-gray-800">まだ先のお話、、、</div>
+                {% else %}
+                  <!-- タスク追加フォーム -->
+                  <div class="task-form-container">
+                    <a href="{% url 'PriorityTask:add' %} " class="h5 mb-0 fw-bold text-gray-800">タスクを追加</a>
+                  </div>
+                {% endif %}
+              </ul>
+            </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- habit(習慣) カード -->
+    <div class="col-12 my-1">
+      <div class="card border-0 border-start border-5 border-secondary shadow h-100 py-2"> 
+        <div class="card-body">
+          <div class="row no-gutters align-items-center">
+            <div class="col mr-2">
+              <div class="text-xs font-weight-bold text-secondary text-uppercase mb-1">Habit</div>
+              <div class="h5 mb-0 font-weight-bold text-gray-800">coming soon...</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- tweet(つぶやき) カード -->
+    <div class="col-12 my-1">
+      <div class="card border-0 border-start border-5 border-success shadow h-100 py-2"> 
+        <div class="card-body">
+          <div class="row no-gutters align-items-center">
+            <div class="col mr-2">
+              <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Tweet</div>
+              {% if tweets %}
+                {% for tweet in tweets %}
+                  <div class="h5 mb-0 font-weight-bold text-gray-800">{{ tweet.content }}</div>
+                  <form action="{% url 'Tweet:delete' pk=tweet.id %}" method="POST" onsubmit="return confirm('本当に削除しますか？')" class="m-0 p-0">
+                    {% csrf_token %}
+                    <button type="submit" class="btn p-0">
+                      <i class="bi bi-trash3 fs-5 text-danger"></i>
+                    </button>
+                  </form> 
+                {% endfor %}
+              {% else %}
+                <div class="h5 mb-0 font-weight-bold text-gray-800">つぶやこう！</div>
+              {% endif %}
+              <a href="{% url 'Tweet:add' %}">追加する</a>
+              </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block footer %}
+<!-- フッター（fixed-bottom）: 背景をやや暗く -->
+<nav class="navbar navbar-light bg-light fixed-bottom shadow">
+  <div class="container d-flex justify-content-around text-white">
+    <a href="#" class="nav-button" onclick="alert('Today画面は未実装'); return false;">
+      <i class="bi bi-house-door fs-5"></i><br><small>Today</small>
+    </a>
+    <a href="#" class="nav-button" onclick="alert('Trends画面は未実装'); return false;">
+      <i class="bi bi-graph-up fs-5"></i><br><small>Trends</small>
+    </a>
+    <a href="#" class="nav-button" onclick="alert('Community画面は未実装'); return false;">
+      <i class="bi bi-people fs-5"></i><br><small>Community</small>
+    </a>
+    <a href="#" class="nav-button" onclick="alert('Profile画面は未実装'); return false;">
+      <i class="bi bi-person fs-5"></i><br><small>Profile</small>
+    </a>
+  </div>
+</nav>
+{% endblock %}
