@@ -57,13 +57,4 @@
   background-color: #f8f9fa; 
 }
 
-body,
-header,
-main,
-footer {
-  background-color: #F7F4ED !important;
-}
-.card,
-.container {
-  background-color: transparent !important;
-}
+
