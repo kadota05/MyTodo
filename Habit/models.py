@@ -1,3 +1,23 @@
 from django.db import models
+from django.core.validators import MaxValueValidator
 
-# Create your models here.
+class Habit(models.Model):
+    name = models.CharField("習慣名", max_length=100)
+    target_day_per_week = models.PositiveIntegerField("週に行うべき回数", default=3, validators=[MaxValueValidator(7)])
+    created_at = models.DateField("作成日")
+    
+    def __str__(self):
+        return self.name
+
+class HabitLog(models.Model):
+    habit = models.ForeignKey(Habit, on_delete=models.CASCADE, related_name='logs')
+    date = models.DateField("作成")
+    completed = models.BooleanField("達成", default=False)
+    created_at = models.DateTimeField("作成日", auto_now_add=True)
+    
+    class Meta:
+        unique_together = ('habit', 'date')
+        
+    def __str__(self):
+        status = "達成" if self.completed else "未達成"
+        return f"{self.habit.name} - {self.date} : {status}"

@@ -1,0 +1,8 @@
+<h1>Hello</h1>
+{% for habitdata in habit_data %}
+<div>
+    <h2>{{ habitdata.habit }}</h2>
+    <p>今週の達成率：{{ habitdata.weekly_rate }}%</p>
+    <p>習慣化率：{{ habitdata.success_weeks }}/13（{{ habitdata.success_percentage }}%）</p>
+</div>
+{% endfor %}

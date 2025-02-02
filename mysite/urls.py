@@ -21,7 +21,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path("", include("core.urls")),
     path("prioritytask/", include("PriorityTask.urls")),
-    #path("habit/", include("Habit.urls")),
+    path("habit/", include("Habit.urls")),
     path("tweet/", include("Tweet.urls")),
-    
 ]

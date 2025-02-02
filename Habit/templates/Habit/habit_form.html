@@ -1,0 +1,14 @@
+{% extends "Habit/base.html" %}
+{% load static %}
+
+{% block content %}
+<form action="" method="POST">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">送信</button>
+</form>
+
+<div>
+    <a href="{% url 'core:index' %}">トップページに戻る</a>
+</div>
+{% endblock %}
