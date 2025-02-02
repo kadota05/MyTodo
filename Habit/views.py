@@ -1,69 +1,53 @@
 from django.shortcuts import render
-from django.views.generic import TemplateView, UpdateView
+from django.views.generic import TemplateView, UpdateView, CreateView, DeleteView
 from django.utils.timezone import now
 from datetime import timedelta, datetime
-from .models import Habit, HabitLog
+from django.urls import reverse_lazy
+from django.http import HttpResponseRedirect
 
-class HabitView(TemplateView):
-    template_name = "Habit/index.html"
+from .models import Habit, HabitLog
+from .forms import HabitForm
+
+class HabitAdd(CreateView):
+    model = Habit
+    form_class = HabitForm
+    success_url = reverse_lazy('core:index')
+    
+    def get_initial(self):
+        initial = super().get_initial()
+        initial['created_at'] = now().date()
+        return initial
+    
+class HabitEdit(UpdateView):
+    model = Habit
+    form_class = HabitForm
+    success_url = reverse_lazy('core:index')
+    
+class HabitDelete(DeleteView):
+    model = Habit
+    success_url = reverse_lazy('core:index')
+    
+class HabitLogAdd(CreateView):
+    model = HabitLog
+    success_url = reverse_lazy('core:index')
     
     def get(self, request, *args, **kwargs):
-        self.today = now().date()
-        if 'post' in kwargs:
-            post = kwargs['post']
-            post = datetime.strptime(post, '%Y-%m-%d').date()
-            self.current_date = post + timedelta(days=1)
-        elif 'pre' in kwargs:
-            pre = kwargs['pre']
-            pre = datetime.strptime(pre, '%Y-%m-%d').date()
-            self.current_date = pre - timedelta(days=1)
-        else:
-            self.current_date = now().date()
-        return super().get(request, *args, **kwargs)
+        habit_pk = self.kwargs.get('habit_pk')
+        habit = Habit.objects.get(pk=habit_pk)
+        
+        self.object = HabitLog.objects.create(
+            habit=habit,
+            date=now().date(),
+            completed=True,
+        )
+        return HttpResponseRedirect(self.success_url)
+
+class HabitLogStatusChange(UpdateView):
+    model = HabitLog
+    success_url = reverse_lazy('core:index')
     
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        habit_data = []
-        
-        start_of_week = self.current_date - timedelta(days=((self.current_date.weekday()+1) % 7))
-        end_of_week = start_of_week + timedelta(days=6)
-        
-        habits = Habit.objects.all()
-        
-        for habit in habits:
-            weekly_logs = habit.logs.filter(date__range=[start_of_week, end_of_week])
-            completed_day = weekly_logs.filter(completed=True).count()
-            
-            target = habit.target_day_per_week
-            weekly_rate = min(int((completed_day / target) * 100), 100)
-            
-            # 登録日から数えてtodayまでで、何週間達成できているか
-            success_weeks = 0
-            creation_date = habit.created_at
-            creation_week_start = creation_date - timedelta(days=((creation_date.weekday()+1) % 7))
-            start_of_week_today = self.today - timedelta(days=((self.today.weekday()+1) % 7))
-            # date - dateになっているから.daysで取り出す
-            weeks_since_creation = (start_of_week_today - creation_week_start).days // 7
-            for week in range(weeks_since_creation + 1):
-                week_start = start_of_week_today - timedelta(weeks=week)
-                week_end = week_start + timedelta(days=6)
-                week_logs = habit.logs.filter(date__range=[week_start, week_end])
-                week_completed = week_logs.filter(completed=True).count()
-                if week_completed >= target:
-                    success_weeks += 1
-            success_weeks = min(success_weeks, 13)
-            success_percentage = int((success_weeks / 13) * 100)
-        
-            habit_data.append({
-            'habit': habit, 
-            'weekly_rate': weekly_rate, 
-            'completed_day': completed_day,
-            'target': target,
-            'success_weeks': success_weeks,
-            'success_percentage': success_percentage,
-            'weekly_logs': weekly_logs
-            })
-        
-        context['habit_data'] = habit_data
-        
-        return context
+    def get(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        self.object.completed = not self.object.completed
+        self.object.save(update_fields=["completed"])
+        return HttpResponseRedirect(self.success_url)

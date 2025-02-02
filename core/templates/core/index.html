@@ -102,15 +102,38 @@
                     <small style="color: #8C8C8C;">習慣化率：{{ habitdata.success_weeks }}/13 ({{ habitdata.success_percentage }}%)</small>
                   </div>
                   <div class="btn-group" role="group">
-                    <button type="button" class="btn btn-outline-success btn-sm" title="今日達成 (未実装)" style="color: #5d4037; border-color: #5d4037;">
+                    <!-- 今日達成できていれば（completed=True）→明るいグリーン -->
+                    {% if habitdata.current_log.completed == True %}
+                    <a href="{% url 'Habit:HabitLogStatusChange' pk=habitdata.current_log.id %}" 
+                      class="btn btn-outline-success btn-sm" 
+                      title="今日達成済み" 
+                      style="color: #66BB6A; border-color: #66BB6A;">
                       <i class="bi bi-check-circle"></i>
-                    </button>
-                    <button type="button" class="btn btn-outline-primary btn-sm" title="編集 (未実装)" style="color: #5d4037; border-color: #5d4037;">
+                    </a>
+                    <!-- 今日達成できてなかったら（completed=False）→落ち着いたグレー -->
+                    {% elif habitdata.current_log.completed == False %}
+                    <a href="{% url 'Habit:HabitLogStatusChange' pk=habitdata.current_log.id %}" 
+                      class="btn btn-outline-success btn-sm" 
+                      title="今日未達成" 
+                      style="color: #B0BEC5; border-color: #B0BEC5;">
+                      <i class="bi bi-check-circle"></i>
+                    </a>
+                    <!---そもそもログが発行されてないとき-->
+                    {% elif habitdata.current_log == None %}
+                      <a href="{% url 'Habit:HabitLogAdd' habit_pk=habitdata.habit.id %}" class="btn btn-outline-success btn-sm" title="チェックを付けよう" style="color: #5d4037; border-color: #5d4037;">
+                        <i class="bi bi-check-circle"></i>
+                      </a>
+                    {% endif %}
+
+                    <a href="{% url 'Habit:HabitEdit' pk=habitdata.habit.id%}" class="btn btn-outline-primary btn-sm" style="color: #5d4037; border-color: #5d4037;">
                       <i class="bi bi-pencil-square"></i>
-                    </button>
-                    <button type="button" class="btn btn-outline-danger btn-sm" title="削除 (未実装)" style="color: #5d4037; border-color: #5d4037;">
+                    </a>
+                    <form action="{% url 'Habit:HabitDelete' pk=habitdata.habit.id %}" method="POST" onsubmit="return confirm('本当に削除しますか？')">
+                      {% csrf_token %}
+                      <button type="submit" class="btn btn-outline-danger btn-sm" style="color: #5d4037; border-color: #5d4037;">
                       <i class="bi bi-trash3"></i>
-                    </button>
+                      </button>
+                    </form>
                   </div>
                 </li>
                 {% endfor %}
@@ -120,9 +143,9 @@
             {% endif %}
           </div>
           <div class="text-end">
-            <button type="button" class="btn btn-outline-secondary btn-sm" title="習慣追加 (未実装)" style="color: #5d4037; border-color: #5d4037;">
+            <a href="{% url 'Habit:HabitAdd' %}" class="btn btn-outline-secondary btn-sm" style="color: #5d4037; border-color: #5d4037;">
               <i class="bi bi-plus-circle"></i> 習慣追加
-            </button>
+            </a>
           </div>
         </div>
       </div>

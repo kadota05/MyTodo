@@ -48,6 +48,9 @@ class DashboardView(TemplateView):
             target = habit.target_day_per_week
             weekly_rate = min(int((completed_day / target) * 100), 100) if target else 0
             
+            # currentdayのログ
+            current_log = weekly_logs.filter(date=self.current_date).first()
+            
             # 登録日から今日までの各週で、目標達成している週の数を算出
             success_weeks = 0
             creation_date = habit.created_at
@@ -72,7 +75,8 @@ class DashboardView(TemplateView):
                 'target': target,
                 'success_weeks': success_weeks,
                 'success_percentage': success_percentage,
-                'weekly_logs': weekly_logs
+                'weekly_logs': weekly_logs,
+                'current_log': current_log,
             })
         context['habit_data'] = habit_data
         
