@@ -6,4 +6,5 @@ urlpatterns = [
     path('', DashboardView.as_view(), name='index'),
     path('pre/<str:pre>/', DashboardView.as_view(), name='pre'),
     path('post/<str:post>/', DashboardView.as_view(), name='post'),
+    path('select/', DashboardView.as_view(), name='select_date')
     ]

@@ -32,13 +32,13 @@
         <button type="button" class="btn-close"></button>
       </div>
       <div class="modal-body">
-        <p style="color: #4A4A4A;">ここでカレンダーを表示し、日付を選択できるようにする想定</p>
-        <form>
+        <form action="{% url 'core:select_date' %}" method="POST">
+          {% csrf_token %}
           <div class="mb-3">
-            <label for="dateInput" class="form-label" style="color: #4A4A4A;">日付選択(ダミー)</label>
-            <input type="date" class="form-control">
+            <label for="dateInput" class="form-label" style="color: #4A4A4A;">日付選択</label>
+            <input type="date" class="form-control" name="date">
           </div>
-          <button type="button" class="btn btn-primary" onclick="alert('日付指定で遷移は未実装'); return false;">移動</button>
+          <input type="submit" class="btn btn-primary">
         </form>
       </div>
     </div>

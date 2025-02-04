@@ -24,6 +24,19 @@ class DashboardView(TemplateView):
             self.current_date = now().date()
         return super().get(request, *args, **kwargs)
     
+    def post(self, request, *args, **kwargs):
+        self.today = now().date()
+        select_data_str = request.POST.get('date')
+        if select_data_str:
+            try:
+                self.current_date = datetime.strptime(select_data_str, '%Y-%m-%d').date()
+            except ValueError:
+                self.current_date = now().date()
+        else:
+            self.current_date = now().date()
+        return self.render_to_response(self.get_context_data())
+        
+    
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         # 日付関連
@@ -84,3 +97,6 @@ class DashboardView(TemplateView):
         context['tweets'] = Tweet.objects.filter(created_at=self.current_date)
         
         return context
+    
+    
+        
