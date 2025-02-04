@@ -1,0 +1,23 @@
+{
+    "name": "Daily Progress",
+    "short_name": "DailyProg",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#ffffff",
+    "theme_color": "#ffffff",
+    "icons": [
+      {
+        "src": "{% static 'core/images/kawasemi_192.jpg' %}",
+        "type": "image/jpg",
+        "sizes": "192x192",
+        "purpose": "any maskable"
+      },
+      {
+        "src": "{% static 'core/images/kawasemi_512.jpg' %}",
+        "type": "image/jpg",
+        "sizes": "512x512",
+        "purpose": "any maskable"
+      }
+    ]
+  }
+  
