@@ -1,4 +1,123 @@
-<form action="{% url 'core:logout' %}" method="POST" onsubmit="return confirm('ログアウトしますか？')">
-    {% csrf_token %}
-    <button type="submit" >ログアウト</button>
-</form> 
+{% extends "core/base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container my-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-6 col-md-8">
+      <!-- プロフィールカード -->
+      <div class="card shadow-sm mb-4" style="border: 1px solid #ddd; border-radius: 5px;">
+        <!-- ヘッダー：タイトルと右側にログアウトボタン -->
+        <div class="card-header d-flex justify-content-between align-items-center" style="background-color: #F7F4ED;">
+          <h6 class="mb-0" style="font-family: 'Bodoni Moda', serif; color: #2C2C2C; font-size: 1rem;">
+            プロフィール
+          </h6>
+          <form action="{% url 'core:logout' %}" method="post"  onsubmit="return confirm('ログアウトしますか？')" class="mb-0">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-sm btn-outline-danger" style="font-family: 'Roboto', sans-serif;">
+              ログアウト
+            </button>
+          </form>
+        </div>
+        <!-- 本文：アバターとユーザー情報 -->
+        <div class="card-body">
+          <div class="row align-items-center">
+            <!-- アバター：アイコンを利用 -->
+            <div class="col-auto">
+              <i class="bi bi-person-circle" style="font-size: 80px; color: #5d4037;"></i>
+            </div>
+            <!-- ユーザー情報 -->
+            <div class="col">
+              <div class="mb-2">
+                <span class="d-block" style="font-size: 0.9rem; color: #8C8C8C;">ユーザー名</span>
+                <span class="d-block" style="font-size: 1.3rem; font-weight: bold; color: #2C2C2C;">
+                  {{ user.username }}
+                </span>
+              </div>
+              <div class="mb-2">
+                <span class="d-block" style="font-size: 0.9rem; color: #8C8C8C;">メールアドレス</span>
+                <span class="d-block" style="font-size: 1.1rem; color: #4A4A4A;">
+                  {{ user.email }}
+                </span>
+              </div>
+              <div>
+                <a href="#" class="btn btn-outline-secondary btn-sm" style="font-family: 'Roboto', sans-serif; color: #5d4037; border-color: #5d4037;">
+                  編集
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 「過去のつぶやき」カード -->
+      <div class="card shadow-sm mb-4" style="border: 1px solid #ddd; border-radius: 5px;">
+        <div class="card-header" style="background-color: #F7F4ED;">
+          <h6 class="mb-0" style="font-family: 'Bodoni Moda', serif; color: #2C2C2C; font-size: 1rem;">
+            過去のつぶやき
+          </h6>
+        </div>
+        <div class="card-body">
+          {% if past_tweets %}
+            <ul class="list-group list-group-flush">
+              {% for tweet in past_tweets %}
+                <li class="list-group-item" style="font-family: 'Roboto', sans-serif; color: #4A4A4A;">
+                  {{ tweet.content }}
+                </li>
+              {% endfor %}
+            </ul>
+          {% else %}
+            <p class="text-center" style="font-family: 'Roboto', sans-serif; color: #8C8C8C;">
+              過去のつぶやきはありません。
+            </p>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- 「習慣化できたこと」カード -->
+      <div class="card shadow-sm mb-4" style="border: 1px solid #ddd; border-radius: 5px;">
+        <div class="card-header" style="background-color: #F7F4ED;">
+          <h6 class="mb-0" style="font-family: 'Bodoni Moda', serif; color: #2C2C2C; font-size: 1rem;">
+            習慣化できたこと
+          </h6>
+        </div>
+        <div class="card-body">
+          {% if successful_habits %}
+            <ul class="list-group list-group-flush">
+              {% for habit in successful_habits %}
+                <li class="list-group-item" style="font-family: 'Roboto', sans-serif; color: #4A4A4A;">
+                  {{ habit.name }} - 達成率: {{ habit.success_rate }}%
+                </li>
+              {% endfor %}
+            </ul>
+          {% else %}
+            <p class="text-center" style="font-family: 'Roboto', sans-serif; color: #8C8C8C;">
+              習慣化できたことはまだありません。
+            </p>
+          {% endif %}
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block footer %}
+<nav class="navbar fixed-bottom" style="background-color: #F7F4ED; border-top: 1px solid #ddd;">
+  <div class="container d-flex justify-content-around">
+    <a href="{% url 'core:index' %}" class="nav-button" style="color: #2C2C2C;">
+      <i class="bi bi-house-door fs-5"></i><br><small>Today</small>
+    </a>
+    <a href="#" class="nav-button" style="color: #2C2C2C;" onclick="alert('Trends画面は未実装'); return false;">
+      <i class="bi bi-graph-up fs-5"></i><br><small>Trends</small>
+    </a>
+    <a href="#" class="nav-button" style="color: #2C2C2C;" onclick="alert('Community画面は未実装'); return false;">
+      <i class="bi bi-people fs-5"></i><br><small>Community</small>
+    </a>
+    <a href="{% url 'core:profile' %}" class="nav-button" style="color: #2C2C2C;">
+      <i class="bi bi-person fs-5"></i><br><small>Profile</small>
+    </a>
+  </div>
+</nav>
+{% endblock %}

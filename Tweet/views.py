@@ -11,6 +11,14 @@ class add(LoginRequiredMixin, CreateView):
     form_class = TweetForm
     success_url = reverse_lazy('core:index')
     
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        return super().form_valid(form)
+    
+    
 class delete(LoginRequiredMixin, DeleteView):
     model = Tweet
     success_url = reverse_lazy('core:index')
+    
+    def get_queryset(self):
+        return super().get_queryset().filter(user=self.request.user)

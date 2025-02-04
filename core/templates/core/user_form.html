@@ -1,17 +1,54 @@
-<!doctype html>
-<html lang="ja">
-<head>
-    <meta charset="utf-8">
-    <title>Example of CreateView</title>
-</head>
-<body>
-    <main>
-        <h2>ユーザーの登録</h2>
-        <form action="{% url 'core:register' %}" method="post">
+{% extends "core/base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container my-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-6 col-md-8">
+      <div class="card shadow-sm" style="border: 1px solid #ddd; border-radius: 5px;">
+        <!-- ヘッダー -->
+        <div class="card-header" style="background-color: #F7F4ED;">
+          <h6 class="my-2" style="font-family: 'Bodoni Moda', serif; color: #2C2C2C; font-size: 1rem;">
+            ユーザーの登録
+          </h6>
+        </div>
+        <!-- フォーム部分 -->
+        <div class="card-body">
+          <form action="{% url 'core:register' %}" method="post" novalidate>
             {% csrf_token %}
-            <table>{{ form.as_table }}</table>
-            <p><input type="submit" value="送信"></p>
-        </form>
-    </main>
-</body>
-</html>
+            {% for field in form %}
+              <div class="mb-3">
+                <label for="{{ field.id_for_label }}" class="form-label" style="font-family: 'Roboto', sans-serif; color: #2C2C2C; font-size: 1.1rem; font-weight: 600;">
+                  {{ field.label }}
+                </label>
+                {{ field }}
+                {% if field.help_text %}
+                  <small class="form-text text-muted" style="font-family: 'Roboto', sans-serif; font-size: 0.8rem;">
+                    {{ field.help_text }}
+                  </small>
+                {% endif %}
+                {% for error in field.errors %}
+                  <div class="text-danger" style="font-family: 'Roboto', sans-serif; font-size: 0.8rem;">
+                    {{ error }}
+                  </div>
+                {% endfor %}
+              </div>
+            {% endfor %}
+            <div class="d-grid">
+              <button type="submit" class="btn btn-outline-secondary btn-sm text-light" style="background-color: #5d4037; border-color: #ddd; font-family: 'Roboto', sans-serif;">
+                登録
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+      <!-- ログイン画面へのリンク -->
+      <div class="mt-3 text-center">
+        <a href="{% url 'core:login' %}" class="btn btn-link" style="font-family: 'Roboto', sans-serif; color: #5d4037;">
+          ログイン
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

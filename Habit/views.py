@@ -19,14 +19,27 @@ class HabitAdd(LoginRequiredMixin, CreateView):
         initial['created_at'] = now().date()
         return initial
     
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        return super().form_valid(form)
+    
+    
 class HabitEdit(LoginRequiredMixin, UpdateView):
     model = Habit
     form_class = HabitForm
     success_url = reverse_lazy('core:index')
     
+    def get_queryset(self):
+        return super().get_queryset().filter(user=self.request.user)
+    
+    
 class HabitDelete(LoginRequiredMixin, DeleteView):
     model = Habit
     success_url = reverse_lazy('core:index')
+    
+    def get_queryset(self):
+        return super().get_queryset().filter(user=self.request.user)
+    
     
 class HabitLogAdd(LoginRequiredMixin, CreateView):
     model = HabitLog
@@ -34,7 +47,7 @@ class HabitLogAdd(LoginRequiredMixin, CreateView):
     
     def get(self, request, *args, **kwargs):
         habit_pk = self.kwargs.get('habit_pk')
-        habit = Habit.objects.get(pk=habit_pk)
+        habit = Habit.objects.get(pk=habit_pk, user=self.request.user)
         
         self.object = HabitLog.objects.create(
             habit=habit,

@@ -14,18 +14,28 @@ class add(LoginRequiredMixin, CreateView):
     model = PriorityTask
     form_class = PriorityTaskForm
     success_url = reverse_lazy('core:index')
+    
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        return super().form_valid(form)
+
 
 class edit(LoginRequiredMixin, UpdateView):
     model = PriorityTask
     form_class = PriorityTaskForm
     success_url = reverse_lazy('core:index')
+    
+    def get_queryset(self):
+        return super().get_queryset().filter(user=self.request.user)
 
 
 class delete(LoginRequiredMixin, DeleteView):
     model = PriorityTask
     success_url = reverse_lazy('core:index')
     
-
+    def get_queryset(self):
+        return super().get_queryset().filter(user=self.request.user)
+    
 
 """
 from .mixins import WeekCalculationMixin

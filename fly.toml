@@ -6,6 +6,9 @@
 app = 'todo-apps'
 primary_region = 'hkg'
 console_command = '/code/manage.py shell'
+auto_stop_machines = false
+auto_start_machines = true
+
 
 [build]
 

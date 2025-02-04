@@ -50,7 +50,7 @@ class DashboardView(LoginRequiredMixin, TemplateView):
         context['today'] = self.today
         
         # Priority Task用
-        context['task'] = PriorityTask.objects.filter(created_date=self.current_date).first()
+        context['task'] = PriorityTask.objects.filter(user=self.request.user, created_date=self.current_date).first()
         
         # Habit用
         habit_data = []
@@ -58,7 +58,7 @@ class DashboardView(LoginRequiredMixin, TemplateView):
         start_of_week = self.current_date - timedelta(days=((self.current_date.weekday()+1) % 7))
         end_of_week = start_of_week + timedelta(days=6)
         
-        habits = Habit.objects.all()
+        habits = Habit.objects.filter(user=self.request.user)
         for habit in habits:
             # 今週のログ
             weekly_logs = habit.logs.filter(date__range=[start_of_week, end_of_week])
@@ -100,7 +100,7 @@ class DashboardView(LoginRequiredMixin, TemplateView):
         context['habit_data'] = habit_data
         
         # Tweet用
-        context['tweets'] = Tweet.objects.filter(created_at=self.current_date)
+        context['tweets'] = Tweet.objects.filter(user=self.request.user, created_at=self.current_date)
         
         return context
 
