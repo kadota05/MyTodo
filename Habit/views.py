@@ -4,11 +4,12 @@ from django.utils.timezone import now
 from datetime import timedelta, datetime
 from django.urls import reverse_lazy
 from django.http import HttpResponseRedirect
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 from .models import Habit, HabitLog
 from .forms import HabitForm
 
-class HabitAdd(CreateView):
+class HabitAdd(LoginRequiredMixin, CreateView):
     model = Habit
     form_class = HabitForm
     success_url = reverse_lazy('core:index')
@@ -18,16 +19,16 @@ class HabitAdd(CreateView):
         initial['created_at'] = now().date()
         return initial
     
-class HabitEdit(UpdateView):
+class HabitEdit(LoginRequiredMixin, UpdateView):
     model = Habit
     form_class = HabitForm
     success_url = reverse_lazy('core:index')
     
-class HabitDelete(DeleteView):
+class HabitDelete(LoginRequiredMixin, DeleteView):
     model = Habit
     success_url = reverse_lazy('core:index')
     
-class HabitLogAdd(CreateView):
+class HabitLogAdd(LoginRequiredMixin, CreateView):
     model = HabitLog
     success_url = reverse_lazy('core:index')
     
@@ -42,7 +43,7 @@ class HabitLogAdd(CreateView):
         )
         return HttpResponseRedirect(self.success_url)
 
-class HabitLogStatusChange(UpdateView):
+class HabitLogStatusChange(LoginRequiredMixin, UpdateView):
     model = HabitLog
     success_url = reverse_lazy('core:index')
     

@@ -1,13 +1,19 @@
 from django.shortcuts import render
-from django.views.generic import TemplateView
+from django.views.generic import TemplateView, CreateView
 from django.utils.timezone import now
 from datetime import datetime, timedelta
+from django.urls import reverse_lazy
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.views import LoginView, LogoutView
+from django.contrib.auth.models import User
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth import login
 
 from PriorityTask.models import PriorityTask
 from Tweet.models import Tweet
 from Habit.models import Habit, HabitLog
 
-class DashboardView(TemplateView):
+class DashboardView(LoginRequiredMixin, TemplateView):
     template_name = "core/index.html"
     
     def get(self, request, *args, **kwargs):
@@ -97,6 +103,24 @@ class DashboardView(TemplateView):
         context['tweets'] = Tweet.objects.filter(created_at=self.current_date)
         
         return context
+
+class UserProfile(TemplateView):
+    template_name = 'core/profile.html'
     
+class UserLogin(LoginView):
+    template_name = 'core/user_login.html'
+    redirect_authenticated_user = False
     
-        
+class UserLogout(LogoutView):
+    pass
+
+class UserRegistration(CreateView):
+    form_class = UserCreationForm
+    template_name = 'core/user_form.html'
+    success_url = reverse_lazy('core:index')
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        user = self.object
+        login(self.request, user)
+        return response

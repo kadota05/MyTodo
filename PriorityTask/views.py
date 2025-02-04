@@ -4,23 +4,24 @@ from django.utils.timezone import now
 from datetime import datetime, timedelta
 from django.views.generic import TemplateView, CreateView, UpdateView, DeleteView, DetailView
 from django.urls import reverse_lazy
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 from .models import PriorityTask
 from .form import PriorityTaskForm
     
     
-class add(CreateView):
+class add(LoginRequiredMixin, CreateView):
     model = PriorityTask
     form_class = PriorityTaskForm
     success_url = reverse_lazy('core:index')
 
-class edit(UpdateView):
+class edit(LoginRequiredMixin, UpdateView):
     model = PriorityTask
     form_class = PriorityTaskForm
     success_url = reverse_lazy('core:index')
 
 
-class delete(DeleteView):
+class delete(LoginRequiredMixin, DeleteView):
     model = PriorityTask
     success_url = reverse_lazy('core:index')
     

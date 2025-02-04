@@ -1,0 +1,4 @@
+<form action="{% url 'core:logout' %}" method="POST" onsubmit="return confirm('ログアウトしますか？')">
+    {% csrf_token %}
+    <button type="submit" >ログアウト</button>
+</form> 
