@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.views.generic import TemplateView, UpdateView, CreateView, DeleteView
+from django.utils import timezone
 from django.utils.timezone import now
 from datetime import timedelta, datetime
 from django.urls import reverse_lazy
@@ -16,7 +17,7 @@ class HabitAdd(LoginRequiredMixin, CreateView):
     
     def get_initial(self):
         initial = super().get_initial()
-        initial['created_at'] = now().date()
+        initial['created_at'] = timezone.localtime(now()).date()
         return initial
     
     def form_valid(self, form):
@@ -51,7 +52,7 @@ class HabitLogAdd(LoginRequiredMixin, CreateView):
         
         self.object = HabitLog.objects.create(
             habit=habit,
-            date=now().date(),
+            date=timezone.localtime(now()).date(),
             completed=True,
         )
         return HttpResponseRedirect(self.success_url)

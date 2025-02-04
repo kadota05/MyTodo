@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.views.generic import TemplateView, CreateView
+from django.utils import timezone
 from django.utils.timezone import now
 from datetime import datetime, timedelta
 from django.urls import reverse_lazy
@@ -17,7 +18,8 @@ class DashboardView(LoginRequiredMixin, TemplateView):
     template_name = "core/index.html"
     
     def get(self, request, *args, **kwargs):
-        self.today = now().date()
+        # 普通にnow()を使うとUTCの現在時刻が返されちゃうけど、timezone.localtime(now())にしたらtimezone通りの時間が得られる
+        self.today = timezone.localtime(now()).date()
         if 'post' in kwargs:
             post = kwargs['post']
             post = datetime.strptime(post, '%Y-%m-%d').date()
@@ -27,19 +29,19 @@ class DashboardView(LoginRequiredMixin, TemplateView):
             pre = datetime.strptime(pre, '%Y-%m-%d').date()
             self.current_date = pre - timedelta(days=1)
         else:
-            self.current_date = now().date()
+            self.current_date = timezone.localtime(now()).date()
         return super().get(request, *args, **kwargs)
     
     def post(self, request, *args, **kwargs):
-        self.today = now().date()
+        self.today = timezone.localtime(now()).date()
         select_data_str = request.POST.get('date')
         if select_data_str:
             try:
                 self.current_date = datetime.strptime(select_data_str, '%Y-%m-%d').date()
             except ValueError:
-                self.current_date = now().date()
+                self.current_date = timezone.localtime(now()).date()
         else:
-            self.current_date = now().date()
+            self.current_date = timezone.localtime(now()).date()
         return self.render_to_response(self.get_context_data())
         
     
@@ -103,6 +105,7 @@ class DashboardView(LoginRequiredMixin, TemplateView):
         context['tweets'] = Tweet.objects.filter(user=self.request.user, created_at=self.current_date)
         
         return context
+
 
 class UserProfile(TemplateView):
     template_name = 'core/profile.html'
