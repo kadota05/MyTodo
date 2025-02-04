@@ -54,7 +54,16 @@
       <div class="card shadow-sm" style="border: 1px solid #ddd; border-radius: 5px;">
         <img src="{% static 'core/images/task.jpg' %}" class="card-img-top" alt="Priority Task Icon" style="object-fit: cover; height: 200px; border-top-left-radius: 5px; border-top-right-radius: 5px;">
         <div class="card-body">
-          <h5 class="card-title" style="font-family: 'Bodoni Moda', serif; color: #2C2C2C;">Priority Task</h5>
+          <h5 class="card-title" style="font-family: 'Bodoni Moda', serif; color: #2C2C2C;">
+            Priority Task
+            <span tabindex="0" 
+                data-bs-toggle="popover" 
+                data-bs-trigger="hover focus" 
+                data-bs-content="今日の中で特に達成したい3つのタスクを登録します。3つにタスクを絞ることで達成率が上がるという実験結果があります。" 
+                style="cursor: pointer; margin-left: 5px;">
+            <i class="bi bi-question-circle"></i>
+          </span>
+          </h5>
           {% if task %}
           <ul class="list-group list-group-flush mb-3">
             {% if task.task1 %}
@@ -90,7 +99,16 @@
       <div class="card shadow-sm" style="border: 1px solid #ddd; border-radius: 5px;">
         <img src="{% static 'core/images/book.jpg' %}" class="card-img-top" alt="Habit Icon" style="object-fit: cover; height: 200px; border-top-left-radius: 5px; border-top-right-radius: 5px;">
         <div class="card-body">
-          <h5 class="card-title" style="font-family: 'Bodoni Moda', serif; color: #2C2C2C;">Habit</h5>
+          <h5 class="card-title" style="font-family: 'Bodoni Moda', serif; color: #2C2C2C;">
+            Habit
+            <span tabindex="0" 
+                data-bs-toggle="popover" 
+                data-bs-trigger="hover focus" 
+                data-bs-content="13週間(約三か月)で習慣化完了とします。習慣化率は達成できた週が何個あるかを計算し、表示します。" 
+                style="cursor: pointer; margin-left: 5px;">
+            <i class="bi bi-question-circle"></i>
+          </span>
+          </h5>
           <div class="mb-3">
             {% if habit_data %}
               <ul class="list-group list-group-flush">
@@ -142,10 +160,8 @@
               <p class="h5 text-center" style="color: #8C8C8C;">習慣が登録されていません。</p>
             {% endif %}
           </div>
-          <div class="text-end">
-            <a href="{% url 'Habit:HabitAdd' %}" class="btn btn-outline-secondary btn-sm" style="color: #5d4037; border-color: #5d4037;">
-              <i class="bi bi-plus-circle"></i> 習慣追加
-            </a>
+          <div class="text-center">
+            <a href="{% url 'Habit:HabitAdd' %}" class="btn btn-outline-secondary" style="color: #5d4037; border-color: #5d4037;">新しい習慣を登録</a>
           </div>
         </div>
       </div>
@@ -156,7 +172,16 @@
       <div class="card shadow-sm" style="border: 1px solid #ddd; border-radius: 5px;">
         <img src="{% static 'core/images/bird-2119874_640.jpg' %}" class="card-img-top" alt="Tweet Icon" style="object-fit: cover; height: 200px; border-top-left-radius: 5px; border-top-right-radius: 5px;">
         <div class="card-body">
-          <h5 class="card-title" style="font-family: 'Bodoni Moda', serif; color: #2C2C2C;">Tweet</h5>
+          <h5 class="card-title" style="font-family: 'Bodoni Moda', serif; color: #2C2C2C;">
+            Tweet
+            <span tabindex="0" 
+                data-bs-toggle="popover" 
+                data-bs-trigger="hover focus" 
+                data-bs-content="考えたことのメモとして、日記として、思うままにご活用ください。" 
+                style="cursor: pointer; margin-left: 5px;">
+            <i class="bi bi-question-circle"></i>
+          </span>
+          </h5>
           {% if tweets %}
             {% for tweet in tweets %}
             <div class="mb-3 position-relative">
@@ -172,10 +197,9 @@
             </div>
             {% endfor %}
           {% else %}
-            <div class="text-center" style="color: #8C8C8C;">つぶやこう！</div>
           {% endif %}
-          <div class="text-end">
-            <a href="{% url 'Tweet:add' %}" class="btn btn-outline-success btn-sm" style="color: #5d4037; border-color: #5d4037;">追加する</a>
+          <div class="text-center">
+            <a href="{% url 'Tweet:add' %}" class="btn btn-outline-success" style="color: #5d4037; border-color: #5d4037;">つぶやく</a>
           </div>
         </div>
       </div>
