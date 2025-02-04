@@ -188,7 +188,7 @@
 {% block footer %}
 <nav class="navbar fixed-bottom" style="background-color: #F7F4ED; border-top: 1px solid #ddd;">
   <div class="container d-flex justify-content-around">
-    <a href="#" class="nav-button" style="color: #2C2C2C;" onclick="alert('Today画面は未実装'); return false;">
+    <a href="{% url 'core:index' %}" class="nav-button" style="color: #2C2C2C;">
       <i class="bi bi-house-door fs-5"></i><br><small>Today</small>
     </a>
     <a href="#" class="nav-button" style="color: #2C2C2C;" onclick="alert('Trends画面は未実装'); return false;">

@@ -2,9 +2,9 @@ from django.db import models
 from django.core.validators import MaxValueValidator
 
 class Habit(models.Model):
-    name = models.CharField("習慣名", max_length=100)
-    target_day_per_week = models.PositiveIntegerField("週に行うべき回数", default=3, validators=[MaxValueValidator(7)])
-    created_at = models.DateField("作成日")
+    name = models.CharField("habit name", max_length=100)
+    target_day_per_week = models.PositiveIntegerField("times per week", default=3, validators=[MaxValueValidator(7)])
+    created_at = models.DateField("created date")
     
     def __str__(self):
         return self.name
