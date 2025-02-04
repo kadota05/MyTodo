@@ -145,9 +145,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LOGIN_REDIRECT_URL = '/'  # ログイン時にリダイレクトするページ（今回はトップページ）
 
-
+# これにリクエスト元を入れないとCSRFははじいちゃう
 CSRF_TRUSTED_ORIGINS = [
-    "https://todo-apps-ancient-haze-7756.fly.dev",
+    "https://todo-apps.fly.dev",
 ]
 # デプロイ環境でHTTPSを使っている場合に推奨されているらしいやつ
 CSRF_COOKIE_SECURE = True
