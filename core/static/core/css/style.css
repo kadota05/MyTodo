@@ -1,43 +1,14 @@
-/* 1週間全体を左右に並べる（フレックスボックスで横並び） */
-.week-header {
-    display: flex;
-    justify-content: space-around; /* あるいは center, space-between など */
-    margin-bottom: 20px;
+body,
+header,
+main,
+footer {
+  background-color: #F7F4ED !important;
 }
-  
-/* 各「1日分」の要素を縦方向に積む */
-.week-day {
-  display: flex;                /* フレックスボックスを有効にする */
-  flex-direction: column;       /* 縦に積む */
-  align-items: center;          /* 中央寄せ（任意） */
-  width: 50px;                  /* 各日の幅を適宜調整 */
+.card,
+.container {
+  background-color: transparent !important;
 }
 
-/* 今日だけ背景色を変えたい等の装飾 */
-.week-day.today {
-  background-color: rgba(255, 215, 0, 0.3);
-  border-radius: 5px;
-}
-
-/* 日付表示のスタイル例 */
-.day-number {
-  font-size: 1.2rem;
-  margin-bottom: 4px; /* 日付と曜日の間隔 */
-}
-
-/* 曜日表示のスタイル例 */
-.week-day {
-  font-size: 0.9rem;
-  margin-bottom: 4px; /* 曜日と黒丸の間隔 */
-}
-
-/* 黒丸のスタイル例 */
-.memo-dot {
-  width: 6px;
-  height: 6px;
-  background-color: black;
-  border-radius: 50%;
-}
 
 .navbar.fixed-top {
   /* もともとの上パディングが 0.5rem 欲しい場合 */
@@ -57,4 +28,38 @@
   background-color: #f8f9fa; 
 }
 
+/* ボタン押下時に少し暗くする */
+.btn:active, .nav-button:active {
+  opacity: 0.8;
+  transition: opacity 0.1s ease;
+}
 
+/* 一般的なボタンのホバー効果（任意） */
+.btn:hover, .nav-button:hover {
+  filter: brightness(0.95);
+}
+/* オン状態：ホバー時にわずかに背景色を変えてフィードバック（必要に応じて調整） */
+.habit-log-btn.completed:hover {
+  background-color: rgba(102, 187, 106, 0.1); /* 任意。背景を薄く緑にする場合 */
+  /* 文字色や枠線はそのまま継続 */
+}
+
+/* オフ状態：ホバー時の背景色や文字色、枠線色を変更しない */
+.habit-log-btn.incomplete:hover {
+  background-color: transparent !important;
+  color: #B0BEC5 !important;
+  border-color: #B0BEC5 !important;
+}
+
+/* btn-pressedクラス追加時のスタイル（例：背景色を変更） */
+.btn-pressed {
+  background-color: rgba(0,0,0,0.1);
+}
+
+.nav-button {
+  color: #B0BEC5; /* 非アクティブは薄い色 */
+  transition: color 0.3s;
+}
+.nav-button.active {
+  color: #2C2C2C; /* アクティブは濃い色 */
+}

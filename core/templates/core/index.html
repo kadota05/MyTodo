@@ -427,16 +427,14 @@
           }
           // ボタンの色・タイトルも更新する例（data.completedで判定）
           const button = habitCard.querySelector('.habit-log-btn');
-          if (button) {
-            if (data.completed) {
-              button.style.color = "#66BB6A";
-              button.style.borderColor = "#66BB6A";
-              button.title = "今日達成済み";
-            } else {
-              button.style.color = "#B0BEC5";
-              button.style.borderColor = "#B0BEC5";
-              button.title = "今日未達成";
-            }
+          if (data.completed) {
+            button.classList.add('completed');
+            button.classList.remove('incomplete');
+            button.title = "今日達成済み";
+          } else {
+            button.classList.add('incomplete');
+            button.classList.remove('completed');
+            button.title = "今日未達成";
           }
         }
       }
@@ -456,8 +454,16 @@
       });
     });
   });
+
+  document.querySelectorAll('button, .nav-button').forEach(btn => {
+    btn.addEventListener('mousedown', function() {
+      btn.classList.add('btn-pressed');
+    });
+    btn.addEventListener('mouseup', function() {
+      setTimeout(() => btn.classList.remove('btn-pressed'), 100);
+    });
+  });
 </script>
-  
 
 <!-- Tweet 投稿モーダル -->
 <div class="modal fade" id="tweetModal" tabindex="-1" aria-labelledby="tweetModalLabel" aria-hidden="true">
@@ -493,16 +499,16 @@
 {% block footer %}
 <nav class="navbar fixed-bottom" style="background-color: #F7F4ED; border-top: 1px solid #ddd;">
   <div class="container d-flex justify-content-around">
-    <a href="{% url 'core:index' %}" class="nav-button" style="color: #2C2C2C;">
+    <a href="{% url 'core:index' %}" class="nav-button active">
       <i class="bi bi-house-door fs-5"></i><br><small>Today</small>
     </a>
-    <a href="#" class="nav-button" style="color: #2C2C2C;" onclick="alert('Trends画面は未実装'); return false;">
+    <a href="#" class="nav-button" onclick="alert('Trends画面は未実装'); return false;">
       <i class="bi bi-graph-up fs-5"></i><br><small>Trends</small>
     </a>
-    <a href="#" class="nav-button" style="color: #2C2C2C;" onclick="alert('Community画面は未実装'); return false;">
+    <a href="#" class="nav-button" onclick="alert('Community画面は未実装'); return false;">
       <i class="bi bi-people fs-5"></i><br><small>Community</small>
     </a>
-    <a href="{% url 'core:profile' %}" class="nav-button" style="color: #2C2C2C;">
+    <a href="{% url 'core:profile' %}" class="nav-button">
       <i class="bi bi-person fs-5"></i><br><small>Profile</small>
     </a>
   </div>

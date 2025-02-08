@@ -25,3 +25,21 @@ workbox.routing.registerRoute(
 
 // その他のキャッシュ戦略やイベントハンドラなどを記述
 self.addEventListener('fetch', function(event) {});
+// service_worker.js
+
+// Workboxのprecaching用のプレースホルダ（ビルド時に埋め込みます）
+workbox.precaching.precacheAndRoute(self.__WB_MANIFEST || []);
+
+// ※ __WB_MANIFEST は workbox-build や workbox-cli で自動生成するファイルリストです。
+
+workbox.routing.registerRoute(
+  ({url}) => url.pathname === '/index.html',
+  new workbox.strategies.StaleWhileRevalidate({
+    cacheName: 'dynamic-index',
+    plugins: [
+      new workbox.expiration.ExpirationPlugin({
+        maxAgeSeconds: secondsUntilMidnight(), // または固定の秒数（例：3600秒）
+      }),
+    ],
+  })
+);
