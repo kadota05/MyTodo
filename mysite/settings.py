@@ -150,7 +150,7 @@ LOGOUT_REDIRECT_URL = '/login/'
 
 # これにリクエスト元を入れないとCSRFははじいちゃう
 CSRF_TRUSTED_ORIGINS = [
-    "https://todo-apps.fly.dev",
+    "https://todo-apps.fly.dev","http://192.168.11.11:8000",
 ]
 # デプロイ環境でHTTPSを使っている場合に推奨されているらしいやつ
 CSRF_COOKIE_SECURE = True

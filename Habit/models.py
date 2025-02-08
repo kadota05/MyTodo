@@ -6,6 +6,8 @@ class Habit(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='habits')
     name = models.CharField("habit name", max_length=100)
     target_day_per_week = models.PositiveIntegerField("times per week", default=3, validators=[MaxValueValidator(7)])
+    successful = models.BooleanField("successful", default=False)
+    successful_date = models.DateField("successful date", null=True, blank=True)
     created_at = models.DateField("created date")
     
     def __str__(self):

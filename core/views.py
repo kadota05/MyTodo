@@ -60,7 +60,7 @@ class DashboardView(LoginRequiredMixin, TemplateView):
         start_of_week = self.current_date - timedelta(days=((self.current_date.weekday()+1) % 7))
         end_of_week = start_of_week + timedelta(days=6)
         
-        habits = Habit.objects.filter(user=self.request.user)
+        habits = Habit.objects.filter(user=self.request.user, successful=False)
         for habit in habits:
             # 今週のログ
             weekly_logs = habit.logs.filter(date__range=[start_of_week, end_of_week])
@@ -88,7 +88,13 @@ class DashboardView(LoginRequiredMixin, TemplateView):
             # 最大13週として計算
             success_weeks = min(success_weeks, 13)
             success_percentage = int((success_weeks / 13) * 100) if 13 else 0
-
+            
+            # success_percentageが100以上なら、successfulフィールドをTrueに設定
+            if success_percentage >= 100:
+                habit.successful = True
+                habit.successful_date = self.today
+                habit.save()  # 更新をデータベースに反映
+            
             habit_data.append({
                 'habit': habit, 
                 'weekly_rate': weekly_rate, 
@@ -107,8 +113,20 @@ class DashboardView(LoginRequiredMixin, TemplateView):
         return context
 
 
-class UserProfile(TemplateView):
+class UserProfile(LoginRequiredMixin, TemplateView):
     template_name = 'core/profile.html'
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        
+        # 達成済み習慣
+        context['successful_habits'] = Habit.objects.filter(user=self.request.user, successful=True)
+        
+        # ランダムツイート
+        context['past_tweet'] = Tweet.objects.filter(user=self.request.user).order_by('?').first()
+        
+        return context
+    
     
 class UserLogin(LoginView):
     template_name = 'core/user_login.html'

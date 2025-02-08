@@ -29,7 +29,7 @@
     <div class="modal-content" style="border: 1px solid #ddd;">
       <div class="modal-header" style="background-color: #F7F4ED;">
         <h1 class="modal-title fs-5" id="calendarModalLabel" style="color: #2C2C2C;">Select Date</h1>
-        <button type="button" class="btn-close"></button>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
         <form action="{% url 'core:select_date' %}" method="POST">
@@ -84,10 +84,15 @@
             </form>
           </div>
           {% elif current_date > today %}
-          <p class="h5 mb-0 text-center" style="color: #8C8C8C;">まだ先のお話、、、</p>
+          <p class="h5 mb-0 text-center" style="color: #8C8C8C;">未来は分かりません</p>
+          {% elif current_date < today %}
+          <p class="h5 mb-0 text-center" style="color: #8C8C8C;">過去は変わりません</p>
           {% else %}
           <div class="text-center">
-            <a href="{% url 'PriorityTask:add' %}" class="btn btn-outline-primary" style="border-color: #5d4037; color: #5d4037;">タスクを追加</a>
+            <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#priorityTaskModal" 
+                    style="border-color: #5d4037; color: #5d4037;">
+              タスクを追加
+            </button>
           </div>
           {% endif %}
         </div>
@@ -113,39 +118,56 @@
             {% if habit_data %}
               <ul class="list-group list-group-flush">
                 {% for habitdata in habit_data %}
-                <li class="list-group-item d-flex justify-content-between align-items-center bg-transparent" style="border: none;">
+                <li id="habit-card-{{ habitdata.habit.id }}" class="list-group-item d-flex justify-content-between align-items-center bg-transparent" style="border: none;">
                   <div>
                     <h6 class="mb-1" style="font-family: 'Roboto', sans-serif; color: #4A4A4A;">{{ habitdata.habit.name }}</h6>
-                    <small style="color: #8C8C8C;">今週の達成率：{{ habitdata.weekly_rate }}%</small><br>
-                    <small style="color: #8C8C8C;">習慣化率：{{ habitdata.success_weeks }}/13 ({{ habitdata.success_percentage }}%)</small>
+                    <small class="habit-weekly-rate" style="color: #8C8C8C;">
+                      今週の達成率：<span>{{ habitdata.weekly_rate }}</span>%
+                    </small><br>
+                    <small class="habit-success" style="color: #8C8C8C;">
+                      習慣化率：<span class="habit-success-weeks">{{ habitdata.success_weeks }}</span>/13 (<span class="habit-success-percentage">{{ habitdata.success_percentage }}</span>%)
+                    </small>
                   </div>
                   <div class="btn-group" role="group">
-                    <!-- 今日達成できていれば（completed=True）→明るいグリーン -->
-                    {% if habitdata.current_log.completed == True %}
-                    <a href="{% url 'Habit:HabitLogStatusChange' pk=habitdata.current_log.id %}" 
-                      class="btn btn-outline-success btn-sm" 
-                      title="今日達成済み" 
-                      style="color: #66BB6A; border-color: #66BB6A;">
-                      <i class="bi bi-check-circle"></i>
-                    </a>
-                    <!-- 今日達成できてなかったら（completed=False）→落ち着いたグレー -->
-                    {% elif habitdata.current_log.completed == False %}
-                    <a href="{% url 'Habit:HabitLogStatusChange' pk=habitdata.current_log.id %}" 
-                      class="btn btn-outline-success btn-sm" 
-                      title="今日未達成" 
-                      style="color: #B0BEC5; border-color: #B0BEC5;">
-                      <i class="bi bi-check-circle"></i>
-                    </a>
-                    <!---そもそもログが発行されてないとき-->
-                    {% elif habitdata.current_log == None %}
-                      <a href="{% url 'Habit:HabitLogAdd' habit_pk=habitdata.habit.id %}" class="btn btn-outline-success btn-sm" title="チェックを付けよう" style="color: #5d4037; border-color: #5d4037;">
+                    {% if habitdata.current_log %}
+                      {% if habitdata.current_log.completed %}
+                        <button class="btn btn-outline-success btn-sm habit-log-btn"
+                                data-url="{% url 'Habit:HabitLogStatusChangeView' pk=habitdata.current_log.id %}"
+                                title="今日達成済み"
+                                style="color: #66BB6A; border-color: #66BB6A;">
+                          <i class="bi bi-check-circle"></i>
+                        </button>
+                      {% else %}
+                        <button class="btn btn-outline-success btn-sm habit-log-btn"
+                                data-url="{% url 'Habit:HabitLogStatusChangeView' pk=habitdata.current_log.id %}"
+                                title="今日未達成"
+                                style="color: #B0BEC5; border-color: #B0BEC5;">
+                          <i class="bi bi-check-circle"></i>
+                        </button>
+                      {% endif %}
+                    {% else %}
+                      <button class="btn btn-outline-success btn-sm habit-log-btn"
+                              data-url="{% url 'Habit:HabitLogAdd' habit_pk=habitdata.habit.id %}"
+                              title="チェックを付けよう"
+                              style="color: #5d4037; border-color: #5d4037;">
                         <i class="bi bi-check-circle"></i>
-                      </a>
+                      </button>
                     {% endif %}
 
-                    <a href="{% url 'Habit:HabitEdit' pk=habitdata.habit.id%}" class="btn btn-outline-primary btn-sm" style="color: #5d4037; border-color: #5d4037;">
+
+
+                    <!--編集-->
+                    <button type="button" class="btn btn-outline-primary btn-sm habit-edit-btn" 
+                            data-bs-toggle="modal" data-bs-target="#habitModal"
+                            data-habit-id="{{ habitdata.habit.id }}"
+                            data-habit-name="{{ habitdata.habit.name }}"
+                            data-target-day="{{ habitdata.habit.target_day_per_week }}"
+                            data-created-date="{{ habitdata.habit.created_at|date:'Y-m-d' }}"
+                            style="color: #5d4037; border-color: #5d4037;">
                       <i class="bi bi-pencil-square"></i>
-                    </a>
+                    </button>
+
+                    <!--削除-->
                     <form action="{% url 'Habit:HabitDelete' pk=habitdata.habit.id %}" method="POST" onsubmit="return confirm('本当に削除しますか？')">
                       {% csrf_token %}
                       <button type="submit" class="btn btn-outline-danger btn-sm" style="color: #5d4037; border-color: #5d4037;">
@@ -160,9 +182,13 @@
               <p class="h5 text-center" style="color: #8C8C8C;">習慣が登録されていません。</p>
             {% endif %}
           </div>
+          <!--追加-->
           <div class="text-center">
-            <a href="{% url 'Habit:HabitAdd' %}" class="btn btn-outline-secondary" style="color: #5d4037; border-color: #5d4037;">新しい習慣を登録</a>
-          </div>
+            <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#habitModal" 
+                    style="color: #5d4037; border-color: #5d4037;">
+              新しい習慣を登録
+            </button>
+          </div>          
         </div>
       </div>
     </div>
@@ -202,17 +228,266 @@
               </div>
             </div>
             {% endfor %}
+          {% elif current_date > today %}
+          <p class="h5 mb-0 text-center" style="color: #8C8C8C;">未来につぶやく？</p>
+          {% elif current_date < today %}
+          <p class="h5 mb-0 text-center" style="color: #8C8C8C;">過去につぶやく？</p>
           {% else %}
-          {% endif %}
           <div class="text-center">
-            <a href="{% url 'Tweet:add' %}" class="btn btn-outline-success" style="color: #5d4037; border-color: #5d4037;">つぶやく</a>
+            <button type="button" class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#tweetModal" 
+                    style="color: #5d4037; border-color: #5d4037;">
+              つぶやく
+            </button>
           </div>
+          {% endif %}          
         </div>
       </div>
     </div>
 
   </div>
 </div>
+
+
+
+<!--モーダルの設定-->
+
+<!-- Priority Task 追加モーダル -->
+<div class="modal fade" id="priorityTaskModal" tabindex="-1" aria-labelledby="priorityTaskModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content" style="border: 1px solid #ddd; border-radius: 5px;">
+      <div class="modal-header" style="background-color: #F7F4ED;">
+        <h5 class="modal-title" id="habitModalLabel" style="color: #2C2C2C;">Priority Task</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form action="{% url 'PriorityTask:add' %}" method="POST" novalidate>
+          {% csrf_token %}
+          <div class="mb-3">
+            <label for="id_task1" class="form-label" style="font-family: 'Raboto', sans-serif; color: #2C2C2C; font-size: 1.1rem; font-weight: 600;">task1</label>
+            <input type="text" class="form-control" name="task1" id="id_task1">
+          </div>
+          <div class="mb-3">
+            <label for="id_task2" class="form-label" style="font-family: 'Raboto', sans-serif; color: #2C2C2C; font-size: 1.1rem; font-weight: 600;">task2</label>
+            <input type="text" class="form-control" name="task2" id="id_task2">
+          </div>
+          <div class="mb-3">
+            <label for="id_task3" class="form-label" style="font-family: 'Raboto', sans-serif; color: #2C2C2C; font-size: 1.1rem; font-weight: 600;">task3</label>
+            <input type="text" class="form-control" name="task3" id="id_task3">
+          </div>
+          <div class="d-grid">
+            <button type="submit" class="btn btn-outline-secondary btn-sm text-light" 
+                    style="border-color: #ddd; font-family: 'Roboto', sans-serif; background-color: #5d4037;">
+              登録
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- Habit 共通モーダル（新規登録／編集切替） -->
+<div class="modal fade" id="habitModal" tabindex="-1" aria-labelledby="habitModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content" style="border: 1px solid #ddd; border-radius: 5px;">
+      <div class="modal-header" style="background-color: #F7F4ED;">
+        <h5 class="modal-title" id="habitModalLabel" style="color: #2C2C2C;">Habit</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="habitForm" method="POST" novalidate>
+          {% csrf_token %}
+          <!-- 隠しフィールド：編集時はhabit idをセット -->
+          <input type="hidden" name="habit_id" id="habit_id">
+          <!-- habit name入力欄 -->
+          <div class="mb-3">
+            <label for="name_habit" class="form-label" style="font-family: 'Roboto', sans-serif; color: #2C2C2C; font-size: 1.1rem; font-weight: 600;">habit name</label>
+            <input type="text" class="form-control" name="name" id="name_habit">
+          </div>
+          <!-- 週間目標日数（スライダー） -->
+          <div class="mb-3">
+            <label for="id_target_day_per_week" class="form-label" style="font-family: 'Roboto', sans-serif; color: #2C2C2C; font-size: 1.1rem; font-weight: 600;">
+              times per week : <span id="sliderValue_id_target_day_per_week" style="font-weight: normal;">3</span>
+            </label>
+            <input type="range" class="form-range" name="target_day_per_week" id="id_target_day_per_week" min="1" max="7" value="3">
+          </div>
+          <!-- created date -->
+          <div class="mb-3"> 
+            <label for="created_date_habit" class="form-label" style="font-family: 'Roboto', sans-serif; color: #2C2C2C; font-size: 1.1rem; font-weight: 600;">created date</label>
+            <input type="date" class="form-control" name="created_at" id="created_date_habit">
+          </div>
+          <!-- 登録／更新ボタン -->
+          <div class="d-grid">
+            <button type="submit" class="btn btn-outline-secondary btn-sm text-light" id="habitSubmitButton" 
+                    style="border-color: #ddd; font-family: 'Roboto', sans-serif; background-color: #5d4037;">
+              登録
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  // Habitモーダル自動切り換え用
+  document.addEventListener('DOMContentLoaded', function() {
+    var habitModal = document.getElementById('habitModal');
+    habitModal.addEventListener('show.bs.modal', function (event) {
+      // モーダルを開くトリガーとなったボタンを取得
+      var button = event.relatedTarget;
+      // data属性から値を取得
+      var habitId = button.getAttribute('data-habit-id');
+      var habitName = button.getAttribute('data-habit-name');
+      var targetDay = button.getAttribute('data-target-day');
+      var createdDate = button.getAttribute('data-created-date');
+  
+      var form = document.getElementById('habitForm');
+      var submitButton = document.getElementById('habitSubmitButton');
+  
+      // 編集モードの場合：habitIdが存在するなら
+      if (habitId) {
+        // 編集用URLに変更（URLパラメータにhabitIdを含める例）
+        form.action = "{% url 'Habit:HabitEdit' pk=0 %}".replace('0', habitId);
+        document.getElementById('habit_id').value = habitId;
+        document.getElementById('name_habit').value = habitName;
+        document.getElementById('id_target_day_per_week').value = targetDay;
+        document.getElementById('sliderValue_id_target_day_per_week').textContent = targetDay;
+        document.getElementById('created_date_habit').value = createdDate;
+        submitButton.textContent = '更新';  // 編集時は「更新」ボタンに
+      } else {
+        // 新規登録モードの場合
+        form.action = "{% url 'Habit:HabitAdd' %}";
+        document.getElementById('habit_id').value = '';
+        document.getElementById('name_habit').value = '';
+        document.getElementById('id_target_day_per_week').value = '3';
+        document.getElementById('sliderValue_id_target_day_per_week').textContent = '3';
+        document.getElementById('created_date_habit').value = "{{ today|date:'Y-m-d' }}";
+        submitButton.textContent = '登録';
+      }
+    });
+  });
+  // スライダーに合わせて数字が動くように
+  (function() {
+    const slider = document.getElementById("id_target_day_per_week");
+    const sliderDisplay = document.getElementById("sliderValue_id_target_day_per_week");
+    slider.addEventListener("input", function() {
+      sliderDisplay.textContent = slider.value;
+    });
+  })();
+  // CSRFトークンをCookieから取得する関数（既に定義済み）
+  function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+      const cookies = document.cookie.split(';');
+      for (let i = 0; i < cookies.length; i++) {
+        const cookie = cookies[i].trim();
+        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+          break;
+        }
+      }
+    }
+    return cookieValue;
+  }
+
+  // 非同期通信でHabitLogの状態を更新し、カードの内容も更新する関数
+  async function updateHabitLog(url) {
+    try {
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': getCookie('csrftoken'),
+        },
+      });
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      const data = await response.json();
+      if (data.success) {
+        console.log('達成状態が更新されました。現在の状態：', data.completed);
+        // ボタン自体の見た目を更新
+        // ※クリックされたボタンを更新するため、ここではイベント発火元のボタンを利用します
+        // 例として、全てのボタンのうち、対象のHabitのカード内のボタンを更新します
+        const habitCard = document.getElementById('habit-card-' + data.habit_id);
+        if (habitCard) {
+          // 更新対象の達成率や習慣化率の要素を取得して更新
+          const weeklyRateElem = habitCard.querySelector('.habit-weekly-rate span');
+          const successWeeksElem = habitCard.querySelector('.habit-success-weeks');
+          const successPercentageElem = habitCard.querySelector('.habit-success-percentage');
+          if (weeklyRateElem) {
+            weeklyRateElem.textContent = data.weekly_rate;
+          }
+          if (successWeeksElem) {
+            successWeeksElem.textContent = data.success_weeks;
+          }
+          if (successPercentageElem) {
+            successPercentageElem.textContent = data.success_percentage;
+          }
+          // ボタンの色・タイトルも更新する例（data.completedで判定）
+          const button = habitCard.querySelector('.habit-log-btn');
+          if (button) {
+            if (data.completed) {
+              button.style.color = "#66BB6A";
+              button.style.borderColor = "#66BB6A";
+              button.title = "今日達成済み";
+            } else {
+              button.style.color = "#B0BEC5";
+              button.style.borderColor = "#B0BEC5";
+              button.title = "今日未達成";
+            }
+          }
+        }
+      }
+    } catch (error) {
+      console.error('達成状態更新中にエラーが発生しました:', error);
+    }
+  }
+
+  // DOM読み込み後に、各HabitLogボタンへイベントリスナーを設定
+  document.addEventListener('DOMContentLoaded', () => {
+    const habitLogButtons = document.querySelectorAll('.habit-log-btn');
+    habitLogButtons.forEach(button => {
+      button.addEventListener('click', async (e) => {
+        e.preventDefault();  // デフォルトのリンク遷移を防止
+        const url = button.getAttribute('data-url');
+        await updateHabitLog(url);
+      });
+    });
+  });
+</script>
+  
+
+<!-- Tweet 投稿モーダル -->
+<div class="modal fade" id="tweetModal" tabindex="-1" aria-labelledby="tweetModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content" style="border: 1px solid #ddd; border-radius: 5px;">
+      <div class="modal-header" style="background-color: #F7F4ED;">
+        <h5 class="modal-title" id="habitModalLabel" style="color: #2C2C2C;">Tweet</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <!-- フォーム部分 -->
+      <div class="modal-body">
+        <form action="{% url 'Tweet:add' %}" method="POST" novalidate>
+          {% csrf_token %}
+          <div class="mb-3">
+            <label for="tweetText" class="form-label" style="font-family: 'Roboto', sans-serif; color: #2C2C2C; font-size: 1.1rem; font-weight: 600;"></label>
+            <textarea class="form-control" name="content" id="tweetText"></textarea>
+          </div>
+          <!-- 送信ボタン -->
+          <div class="d-grid bg-dark">
+            <button type="submit" class="btn btn-outline-secondary btn-sm text-light" 
+                    style="border-color: #ddd; font-family: 'Roboto', sans-serif;">
+              つぶやく
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
 {% endblock %}
 
 {% block footer %}

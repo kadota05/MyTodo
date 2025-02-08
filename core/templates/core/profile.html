@@ -7,43 +7,28 @@
     <div class="col-lg-6 col-md-8">
       <!-- プロフィールカード -->
       <div class="card shadow-sm mb-4" style="border: 1px solid #ddd; border-radius: 5px;">
-        <!-- ヘッダー：タイトルと右側にログアウトボタン -->
         <div class="card-header d-flex justify-content-between align-items-center" style="background-color: #F7F4ED;">
           <h6 class="mb-0" style="font-family: 'Bodoni Moda', serif; color: #2C2C2C; font-size: 1rem;">
             プロフィール
           </h6>
-          <form action="{% url 'core:logout' %}" method="post"  onsubmit="return confirm('ログアウトしますか？')" class="mb-0">
+          <form action="{% url 'core:logout' %}" method="post" onsubmit="return confirm('ログアウトしますか？')" class="mb-0">
             {% csrf_token %}
             <button type="submit" class="btn btn-sm btn-outline-danger" style="font-family: 'Roboto', sans-serif;">
               ログアウト
             </button>
           </form>
         </div>
-        <!-- 本文：アバターとユーザー情報 -->
         <div class="card-body">
           <div class="row align-items-center">
-            <!-- アバター：アイコンを利用 -->
             <div class="col-auto">
               <i class="bi bi-person-circle" style="font-size: 80px; color: #5d4037;"></i>
             </div>
-            <!-- ユーザー情報 -->
             <div class="col">
               <div class="mb-2">
                 <span class="d-block" style="font-size: 0.9rem; color: #8C8C8C;">ユーザー名</span>
                 <span class="d-block" style="font-size: 1.3rem; font-weight: bold; color: #2C2C2C;">
                   {{ user.username }}
                 </span>
-              </div>
-              <div class="mb-2">
-                <span class="d-block" style="font-size: 0.9rem; color: #8C8C8C;">メールアドレス</span>
-                <span class="d-block" style="font-size: 1.1rem; color: #4A4A4A;">
-                  {{ user.email }}
-                </span>
-              </div>
-              <div>
-                <a href="#" class="btn btn-outline-secondary btn-sm" onclick="alert('プロフィール編集機能は未実装'); return false;" style="font-family: 'Roboto', sans-serif; color: #5d4037; border-color: #5d4037;">
-                  編集
-                </a>
               </div>
             </div>
           </div>
@@ -58,19 +43,26 @@
           </h6>
         </div>
         <div class="card-body">
-          {% if past_tweets %}
-            <ul class="list-group list-group-flush">
-              {% for tweet in past_tweets %}
-                <li class="list-group-item" style="font-family: 'Roboto', sans-serif; color: #4A4A4A;">
-                  {{ tweet.content }}
-                </li>
-              {% endfor %}
-            </ul>
-          {% else %}
-            <p class="text-center" style="font-family: 'Roboto', sans-serif; color: #8C8C8C;">
-              過去のつぶやきはありません。
-            </p>
-          {% endif %}
+          <div class="p-3 d-flex justify-content-between align-items-center"
+               style="background-color: #F7F4ED; border: 1px solid #ddd; border-radius: 15px; font-family: 'Roboto', sans-serif; color: #4A4A4A;">
+            {% if past_tweet %}
+              <div class="flex-grow-1 me-3" style="font-family: 'Roboto', sans-serif; color: #4A4A4A">
+                <p class="mb-1">{{ past_tweet.content }}</p>
+                <small style="color: #8C8C8C;">{{ past_tweet.created_at }}</small>
+              </div>
+              <!-- 削除ボタン部分 -->
+              <form action="{% url 'Tweet:delete' pk=past_tweet.id %}" method="POST" class="m-0">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-sm btn-outline-danger" title="削除" style="color: #5d4037; border-color: #5d4037;">
+                  <i class="bi bi-trash3"></i>
+                </button>
+              </form>
+            {% else %}
+              <p class="text-center" style="font-family: 'Roboto', sans-serif; color: #8C8C8C;">
+                過去のつぶやきはありません。
+              </p>
+            {% endif %}
+          </div>
         </div>
       </div>
 
@@ -85,8 +77,14 @@
           {% if successful_habits %}
             <ul class="list-group list-group-flush">
               {% for habit in successful_habits %}
-                <li class="list-group-item" style="font-family: 'Roboto', sans-serif; color: #4A4A4A;">
-                  {{ habit.name }} - 達成率: {{ habit.success_rate }}%
+                <li class="list-group-item" style="background-color: #F7F4ED; font-family: 'Roboto', sans-serif; color: #4A4A4A;">
+                  <div class="d-flex flex-column">
+                    <h7 class="mb-1" style="font-family: 'Roboto', sans-serif; color: #4A4A4A;">{{ habit.name }}</h7>
+                    <small style="color: #8C8C8C;">
+                      開始日: {{ habit.created_at }}<br>
+                      達成日: {{ habit.successful_date }}
+                    </small>
+                  </div>
                 </li>
               {% endfor %}
             </ul>
